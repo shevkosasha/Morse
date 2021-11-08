@@ -1,72 +1,25 @@
-html, body {
+/* html, body {
   margin: 0;
   min-height: 100vh;
   box-sizing: border-box;
   font-family: "Exo 2", sans-serif;
   background-color:#e3e1eb;
-}
-
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
-.app {
-  padding: 20px;
-  display: flex;
-  min-height: 100vh;
-  min-width: 100%;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.header {
-  padding: 20px 0;
-  text-align: center;
-}
-
-.header > a {
-  font-size: 28px;
-  color: rgb(201, 181, 181);
-  text-decoration: none;
-}
-
-.title {
-  font-size: 24px;
-  text-align: center;
-}
-
-/* .mainmenu__list {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  border: 1px gray solid;
-  display: flex;
-}
-
-.mainmenu li {
-  list-style: none;
-}
-
-.mainmenu__link {
-  display: block;
-  padding: 10px 25px;
-  color: #000;
-  text-decoration: none;
-}
-
-.mainmenu__link:hover {
-  text-decoration: none;
-  background-color: darkgray;
-  color: #fff;
-}
-
-.mainmenu__link.active {
-  text-decoration: none;
-  background-color: #000;
-  color: #fff;
 } */
-
-.content {
-  padding: 1.5em 0;
-  flex-grow: 1;
+div.scrollup {
+  position: fixed; /* фиксированная позиция */
+  color: #fff; /* цвет текста */
+  background-color: #357581; /* цвет заднего фона */
+  right: 20px; /* расстояние от правого края */
+  bottom: 0px; /* расстояние от нижнего края */
+  padding: 4px 10px; /* отступы до содержимого блока */
+  font-size: 20px; /* размер шрифта (иконки) */
+  border-top-left-radius: 4px; /* скругление верхнего левого угла */
+  border-top-right-radius: 4px; /* скругление верхнего правого угла */
+  cursor: pointer; /* форма курсора */
+  display: none; /* не отображать элемент */
+  text-align: center; /*выравнивание содержимого элемента по центру */
 }
+div.scrollup:hover {
+  background-color: #000; /* цвет заднего фона при наведении */
+}
+

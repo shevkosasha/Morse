@@ -35,25 +35,27 @@ const About = {
 const Explore = {
   id: "explore",
   title: "Let's explore Morse Code",   
-  decodeInputs: `  
+  // decodeInputs: `  
                                    
-              <div id="wrap_tArea" class="flex-container">
-                <div id="word"  class="flex-item">
-                  <h3>Type text in <span id="current_language">English</span> language</h3>
-                  <textarea rows="10" cols="45" name="text" id="code_word" class="code-word"></textarea>
-                </div>  
-                <div id="morse" class="flex-item">
-                  <h3>Type morse code</h3>
-                  <textarea rows="10" cols="45" name="text" id="decode_morse" class="decode-morse"></textarea>
-                </div>
-              </div>
-              <div class="flex-container buttons">
-                <button class="flex-item clear">Clear</button>
-                <button class="flex-item play">Play</button>                              
-              </div>
+  //             <div id="wrap_tArea" class="flex-container">
+  //               <div id="word"  class="flex-item">
+  //                 <h3>Type text in <span id="current_language">English</span> language</h3>
+  //                 <textarea rows="10" cols="45" name="text" id="code_word" class="code-word"></textarea>
+  //               </div>  
+  //               <div id="morse" class="flex-item">
+  //                 <h3>Type morse code</h3>
+  //                 <textarea rows="10" cols="45" name="text" id="decode_morse" class="decode-morse"></textarea>
+  //               </div>               
+  //             </div>
+
+  //             <div class="flex-container buttons">
+  //               <button class="flex-item clear">Clear</button>
+  //               <button class="flex-item play">Play</button>                              
+  //             </div>
+              
                
-                `
-  ,
+  //               `
+  // ,
   render: (className = "container", contentContainer, ...rest) => {
     return `
             <div class="content-container">
@@ -70,10 +72,29 @@ const Explore = {
                   </div>
                 </div>
                 <div class="alphabet"></div>
-              </section>
-            </div>   
+
+                <section class="decode_inputs">
+                  <div id="wrap_tArea" class="flex-container">
+                    <div id="word"  class="flex-item">
+                      <h3>Type text in <span id="current_language">English</span> language</h3>
+                      <textarea rows="10" cols="45" name="text" id="code_word" class="code-word"></textarea>
+                    </div>  
+                    <div id="morse" class="flex-item">
+                      <h3>Type morse code</h3>
+                      <textarea rows="10" cols="45" name="text" id="decode_morse" class="decode-morse"></textarea>
+                    </div>               
+                  </div>
+
+                  <div class="flex-container buttons">
+                    <button class="flex-item clear morseButton">Clear Fields</button>
+                    <button class="flex-item play morseButton">Play Morse</button>
+                    <button id="morse_Button" class="flex-item tap morseButton">Tap Morse</button>                                        
+                  </div>                  
+                </section>   
+
+              </section>              
               
-              
+            </div>  
             `;
   }
 };
@@ -236,6 +257,39 @@ const Practice = {
       </section>
     </div>
      
+    `;
+  }
+};
+
+const Results = {
+  id: "results",
+  title: "Table of results",
+  render: (className = "container", ...rest) => {
+    return `
+    
+      <section class="${className}">
+        <h1>Results</h1>
+        <div id="users-list__container">
+          <div class="columns">
+            <div class="column">
+                <div class="users-list">
+                    <h4 class="title is-4">Список пользователей:</h4>
+                    <table id="users-list" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Пользователь</th>
+                                <th>email</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-list__container"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      </div>
+      </section>
+      
     `;
   }
 };

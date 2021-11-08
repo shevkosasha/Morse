@@ -1,19 +1,12 @@
 .alphabet {
-  /* background: rgb(215, 228, 146); */
-  /* box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.25); */
   font-family: 'Roboto', sans-serif;
   line-height: 2em;
   display: flex;
-  /* flex-direction: column; */
-  /* justify-content: space-evenly; */
   justify-content: center;
   flex-wrap: wrap;
   height: max-content;
   align-content: space-between;
   width: 95%;
-  /* height: calc(100% - 5.1em); */
-  /* max-width: 100%; */
-  /* overflow-y: scroll; */
   position: relative;
   top: 20px;
   left: 0px;
@@ -29,10 +22,6 @@
   display: -ms-flexbox;
   display: flex;
   align-items: flex-start;
-
-  /* -webkit-box-align: center;
-      -ms-flex-align: center; */
-          /* align-items: center; */
   width: 90px;
   margin: 10px;
   padding: 0.3em;
@@ -86,16 +75,16 @@
   justify-content: center;
 }
 .flex-item {
-  padding: 20px;
+  /* padding: 20px; */
   margin-left: 5px;
   margin-right: 5px;
   -webkit-flex-basis: 100px; 
   flex-basis: 100px;
 }
-.play, .clear {
-  /* margin: 20px; */
+.play, .clear, .tap {
+  margin: 20px;
   padding: 10px;
-  margin-left: 20px;
+   margin-left: 20px;
   margin-right: 20px;
 }
 
@@ -107,12 +96,39 @@ textarea {
   -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-	/* border: 1px solid rgb(78, 26, 26);  */
-  /* font-family: 'Montserrat', sans-serif; */
   font-size: 1.5em;
   text-transform: uppercase;
   text-align: center;
-  /* letter-spacing: 3px; */
-  /* font-weight: 600; */
+}
+
+.morseButton {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 60px;
+  height: 60px;
+  /* margin-top: 30px;
+  margin-bottom: 10px; */
+  border-radius: 30%;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 2px rgb(0 0 0 / 35%), 0 -1px 1px #fff;
+  -webkit-transition: width .5s ease-out,background .5s ease-out,-webkit-transform 40ms ease-out,-webkit-box-shadow 40ms ease-out;
+  -webkit-transition: box-shadow 40ms ease-out,width .5s ease-out,background .5s ease-out,-webkit-transform 40ms ease-out;
+  transition: box-shadow 40ms ease-out,width .5s ease-out,background .5s ease-out,-webkit-transform 40ms ease-out;
+  transition: transform 40ms ease-out,box-shadow 40ms ease-out,width .5s ease-out,background .5s ease-out;
+  transition: transform 40ms ease-out,box-shadow 40ms ease-out,width .5s ease-out,background .5s ease-out,-webkit-transform 40ms ease-out;
+  background: rgba(112,138,144,.5);
+}
+.morseButton .paddle{
+  display: none;
+}
+.morseButton:active {
+  -webkit-transform: translateY(3px);
+  transform: translateY(3px);
+  box-shadow: 0 0 2px rgb(0 0 0 / 30%);
 }
       

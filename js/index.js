@@ -14,6 +14,7 @@ const routes = {
   contacts: Contacts,
   explore: Explore,
   practice: Practice,
+  results: Results,
   default: HomePage,
   error: ErrorPage,
 };
@@ -46,19 +47,16 @@ const mySPA = (function(){
       contentContainer.innerHTML = '';
       contentContainer.innerHTML = routesObj[routeName].render(`${routeName}-page`,contentContainer);
       if (routeName === 'explore') {
-        this.createMorseTable(`${routeName}-page`);
-        this.createDecodeInputs(`${routeName}-page`);
-        // routesObj[routeName].createDecodeInputs(`${routeName}-page`,contentContainer);
+        this.createMorseTable();
       }
       if (routeName === 'practice') {
        myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
-      }
+      }      
       
-      // contentContainer.innerHTML += routesObj[routeName].createMorseTable(`${routeName}-page`);
       this.updateButtons(routesObj[routeName].id);
     },
 
-    this.createMorseTable = (lang = 'eng') => {   
+    this.createMorseTable = () => {   
 
       let arr = (language == 'eng') ? morseCode : morseCodeRus;
       let div = myModuleContainer.querySelector('.alphabet');
@@ -72,19 +70,11 @@ const mySPA = (function(){
         div.append(btn);
       }
     },
-
-    this.createDecodeInputs = (className = "container") => {
-      this.section = myModuleContainer.querySelector(`.${className}`);
-      let inputSection = document.createElement('section');
-      inputSection.classList.add('decode_inputs');
-      inputSection.innerHTML = Explore.decodeInputs;      
-      this.section.append(inputSection);  
-    },
-
+   
     this.setLanguage = (lang) => {
       language = lang;
       myModuleContainer.querySelector('#current_language').textContent = (language === 'eng') ? 'English' : 'Russian';
-      this.createMorseTable(language);
+      this.createMorseTable();
     }
 
     this.updateButtons = function(currentPage) {
@@ -95,20 +85,20 @@ const mySPA = (function(){
       }
     }
 
-    this.select = (elem) => {
-      elem.classList.add('selected');
-    }
+    this.select = (elem) => elem.classList.add('selected');
+    this.hideSelect = (elem) => elem.classList.remove('selected');
+    this.printMorseOrStr = (morseStr,field) =>field.value = morseStr; 
+    this.clearInput = (tArea1, tArea2) => tArea2.value = tArea1.value = '';
 
-    this.hideSelect = (elem) => {
-      elem.classList.remove('selected');
-    }
+    this.showToTopBtn = () => {
+      myModuleContainer.querySelector('.scrollup').style.display = (window.pageYOffset > 250) ? 'block' : 'none';
+    },
 
-    this.printMorseOrStr = (morseStr,field) => {
-      field.value = morseStr; 
-    }
-
-    this.clearInput = (tArea1, tArea2) => {
-      tArea2.value = tArea1.value = '';
+    this.toTop = () => {
+      window.scrollBy({
+        top: -document.documentElement.scrollHeight,
+        behavior: 'smooth'
+      });
     }
 
     this.showQuestion = (question, options, index, score, userdata) => {
@@ -153,9 +143,7 @@ const mySPA = (function(){
     }
     this.hideCheckModal = () => myModuleContainer.querySelector('#option-modal').style.display = "none";
 
-    this.removeQuiz = () => {
-      myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
-    }
+    this.removeQuiz = () => myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
 
     this.showScoreModal = (result) => {
       
@@ -169,10 +157,64 @@ const mySPA = (function(){
     }
 
     this.closeScoreModal = () => {myModuleContainer.querySelector('#score-modal').style.display = 'none';}
-    this.showWarning = () => {
-      myModuleContainer.querySelector('#username_input').querySelector('h2').classList.add('wrong-name');
-    }
-    // this.hideWarning = () =>  myModuleContainer.querySelector('.wrong-name').style.display = 'none';
+    this.showWarning = () => myModuleContainer.querySelector('#username_input').querySelector('h2').classList.add('wrong-name');
+
+
+    this.printUser = function(userList) {
+      let userListContainer = document.getElementById('users-list__container');
+
+      if (!userListContainer) {
+          document.getElementById('users').innerHTML += `
+          <div class="columns">
+              <div class="column">
+                  <div class="users-list">
+                      <h4 class="title is-4">Список пользователей:</h4>
+                      <table id="users-list" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                          <thead>
+                              <tr>
+                                  <th>Пользователь</th>
+                                  <th>email</th>
+                                  <th></th>
+                              </tr>
+                          </thead>
+                          <tbody id="users-list__container"></tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+          `;
+          userListContainer = document.getElementById('users-list__container');
+      } else {
+          userListContainer.innerHTML = '';
+      }
+
+      for (let user in userList) {
+          userListContainer.appendChild(createRow(user, userList));
+      }
+      
+
+      function createRow(user, userList) {
+          let row = document.createElement('tr'),
+              td1 = document.createElement('td'),
+              td2 = document.createElement('td'),
+              td3 = document.createElement('td');
+              td4 = document.createElement('td');
+              td5 = document.createElement('td');
+          row.setAttribute('data-id', user);
+          td1.innerHTML = `<strong>${userList[user].name}</strong>`;
+          td2.innerHTML = `${userList[user].context}`;
+          td3.innerHTML = `${userList[user].level}`;
+          td4.innerHTML = `${userList[user].language}`;
+          td5.innerHTML = `<a href="#" class="delete is-medium" title="удалить пользователя">Удалить</a>`;
+          row.appendChild(td1);
+          row.appendChild(td2);
+          row.appendChild(td3);
+          row.appendChild(td4);
+          row.appendChild(td5);
+
+          return row;
+      }
+  }
 
   };
   /* -------- end view --------- */
@@ -317,13 +359,13 @@ const mySPA = (function(){
 
       let name = obj.name;
 
-      myDB.ref("users/").once("value")
-      .then(function(snapshot) {
-          console.log("Users list:");
-          console.log(snapshot.val());
-      }).catch(function (error) {
-          console.log("Error: " + error.code);
-      });
+      // myDB.ref("users/").once("value")
+      // .then(function(snapshot) {
+      //     console.log("Users list:");
+      //     console.log(snapshot.val());
+      // }).catch(function (error) {
+      //     console.log("Error: " + error.code);
+      // });
 
       // myDBRef.child("users").child(name).get().then((snapshot) => {
       //   if (snapshot.exists()) {
@@ -544,7 +586,7 @@ const mySPA = (function(){
       setTimeout(() => {
         myModuleView.setLabelBackground();
         this.getNextQuestion();
-      }, 2000);
+      }, 3000);
       // console.log(playerScore + ', ' + wrongAttempt);
     };
 
@@ -552,6 +594,8 @@ const mySPA = (function(){
     this.hideCheckModal = () => myModuleView.hideCheckModal();    
     this.showWarning = () => myModuleView.showWarning();
     this.hideWarning = () => myModuleView.hideWarning();
+    this.showToTopBtn = () => myModuleView.showToTopBtn()
+    this.toTop = () => myModuleView.toTop();
 
     this.closeScoreModal = () => {
       myModuleView.closeScoreModal();
@@ -566,6 +610,25 @@ const mySPA = (function(){
        myModuleView.removeQuiz();
     };
 
+    this.getUsersList = function() {
+      myDB.ref("users/").once("value")
+      .then(function(snapshot) {
+          console.log("Users list:");
+          console.log(snapshot.val());
+          myModuleView.printUser(snapshot.val());
+      }).catch(function (error) {
+          console.log("Error: " + error.code);
+      });
+    }
+
+    this.printUsersList = function() {
+      myDB.ref("users/").on("value", function(snapshot) {
+        myModuleView.printUser(snapshot.val());
+      }, function (error) {
+          console.log("Error: " + error.code);
+      });
+    }
+
   }
   /* -------- end model -------- */
 
@@ -573,8 +636,6 @@ const mySPA = (function(){
   function ModuleController (){
     let myModuleContainer = null;
     let myModuleModel = null;
-    let str  = '';
-    let morseStr = '';
 
     this.init = function(container, model) {
       myModuleContainer = container;
@@ -592,9 +653,22 @@ const mySPA = (function(){
       }
 
       window.addEventListener("hashchange", update);
+      this.addScrollHandler();
+      // this.addMenuCloseHandler();
       update();
     },
 
+    this.addScrollHandler = (e) => {
+      let toTopBtn = myModuleContainer.querySelector('.scrollup');
+      window.addEventListener('scroll', (e) => { myModuleModel.showToTopBtn();})     
+      toTopBtn.addEventListener('click', () => { myModuleModel.toTop(); });
+    },
+
+    // this.addMenuCloseHandler = (e) => {
+    //   myModuleContainer.addEventListener('click', (e) => {
+    //     console.log(e.target);
+    //   })
+    // }
     
     this.updateState = function(page) {        
       myModuleModel.updateState(page);        
@@ -605,6 +679,7 @@ const mySPA = (function(){
 
       if (page === 'explore') this.addExplorePageListeners();
       if (page === 'practice') this.addPracticePageListeners();
+      if (page === 'results') myModuleModel.printUsersList();      
     },
 
     this.addPracticePageListeners = function(){
@@ -614,8 +689,6 @@ const mySPA = (function(){
         let userdata = {};
         const inputs = myModuleContainer.querySelectorAll('input');
         if (e.target.className === 'start-quiz-button') {
-          // e.preventDefault();
-          // e.stopPropagation();
 
           inputs.forEach(input => {
             if (input.type === 'text' && input.name === 'user') {
@@ -633,9 +706,9 @@ const mySPA = (function(){
           })
           // console.log(userdata);
           if (!userdata.name) {
+            // debugger;
             myModuleModel.showWarning();
           } else {
-            // myModuleModel.hideWarning();
             myModuleModel.createQuiz(userdata);
             myModuleContainer.querySelector('main').addEventListener('click',this.quizHandler);
           }
@@ -650,14 +723,11 @@ const mySPA = (function(){
       e.preventDefault();
       e.stopPropagation();
       let parentDiv = myModuleContainer.querySelector('.game-options-container'); 
-      // debugger;
-      // console.log(e.target);
       let selectedOption = parentDiv.querySelector('.selected');
       
       if (e.target.className === 'next-button'){
         if (selectedOption){
           let currentAnswer = selectedOption.querySelector('label').textContent;
-          // console.log(currentAnswer);
           myModuleModel.checkAnswer(currentAnswer);
           // debugger;
         } else {
@@ -678,7 +748,6 @@ const mySPA = (function(){
       }
 
       if (e.target.classList.contains("img_play")) {
-        // debugger;
         let str = (e.target.classList.contains("answer")) ? e.target.parentNode.querySelector('.option').textContent :
                                                             e.target.parentNode.querySelector('#display-question').textContent;
         myModuleModel.playMorse(str);
@@ -692,40 +761,46 @@ const mySPA = (function(){
         }       
       }
 
-      // if (e.target.className == 'closeScoreModal') {
-      //   myModuleModel.closeScoreModal();
-      // }
-    }
-
-   
+    } 
+    
 
     this.addExplorePageListeners = function(){
-      const alphabetBtns = content.querySelectorAll('.alphabet-button'),
-            textareas = document.querySelectorAll('textarea'),
+      myModuleContainer.querySelector(`.content`).addEventListener('click', (e) => {
 
-            clearBtns = document.querySelectorAll('.clear'),
-            playBtns = document.querySelectorAll('.play');
+        if (e.target.classList.contains('alphabet-button') || 
+            e.target.classList.contains('morse') || 
+            e.target.classList.contains('alpha')) {
+          let inner;               
+          switch (e.target.className) {                        
+              case 'morse': inner = e.target.innerHTML; break;
+              case 'alpha': inner = e.target.parentNode.querySelector('.morse').innerHTML; break;
+              case 'alphabet-button': inner = e.target.querySelector('.morse').innerHTML; break;
+          }
+          myModuleModel.playMorse(inner);           
+        }
 
-      const changeLangInputs = myModuleContainer.querySelectorAll('.lang');
-      changeLangInputs.forEach(input => {
-          input.addEventListener('click', (e) => {            
-            myModuleModel.setLanguage(input.value);
-          })
+        if (e.target.classList.contains('clear')) {
+          e.preventDefault();
+          myModuleModel.clearInput(myModuleContainer.querySelector('.code-word'), myModuleContainer.querySelector('.decode-morse'));
+        };
+
+        if (e.target.classList.contains('play')){
+          e.preventDefault();
+          let inner = myModuleContainer.querySelector('.decode-morse').value;
+          myModuleModel.playMorse(inner);
+        }
+
+        if (e.target.classList.contains('tap')){
+          e.preventDefault();
+          console.log('tap');
+        }
+
+        if (e.target.classList.contains('lang')){
+          myModuleModel.setLanguage(e.target.value);
+        }
       })
 
-      alphabetBtns.forEach(btn => {
-        btn.addEventListener('click',(e) => {
-            // e.preventDefault();
-            let inner;               
-            switch (e.target.className) {                        
-                case 'morse': inner = e.target.innerHTML; break;
-                case 'alpha': inner = e.target.parentNode.querySelector('.morse').innerHTML; break;
-                case 'alphabet-button': inner = e.target.querySelector('.morse').innerHTML; break;
-            }
-            myModuleModel.playMorse(inner);                
-        })
-      })
-      
+      const textareas = document.querySelectorAll('textarea');
       textareas.forEach(tArea => {
         if (tArea.classList.contains('code-word')) {
           tArea.addEventListener('input', (e) => { 
@@ -737,23 +812,7 @@ const mySPA = (function(){
             myModuleModel.decodeMorse(tArea.value, myModuleContainer.querySelector('#code_word'));            
           });
         }
-      })
-
-      clearBtns.forEach(btn => {
-        btn.addEventListener('click',(e) => {
-          e.preventDefault();
-          myModuleModel.clearInput(myModuleContainer.querySelector('.code-word'), myModuleContainer.querySelector('.decode-morse'));
-        })           
-      })
-
-      playBtns.forEach(btn => {
-        btn.addEventListener('click',(e) => {
-          e.preventDefault();
-          let inner = myModuleContainer.querySelector('.decode-morse').value;
-          myModuleModel.playMorse(inner);
-        })           
-      })
-
+      })    
     }
 
   }

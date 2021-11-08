@@ -19,6 +19,7 @@ const NavBar = {
           <li><a class="mainmenu__link" href="#about">About Morse Code</a></li>
           <li><a class="mainmenu__link" href="#explore">Explore Morse Code</a></li>
           <li><a class="mainmenu__link" href="#practice">Practice Morse Code</a></li>
+          <li><a class="mainmenu__link" href="#results">Table of results</a></li>
           <li><a class="mainmenu__link" href="#contacts">Контакты</a></li>
           </ul>
         </div>
@@ -31,7 +32,12 @@ const NavBar = {
 
 const Content = {
   render: (customClass = "") => {
-    return `<div class="content ${customClass}" id="content"></div>`;
+    return `
+    <div class="content ${customClass}" id="content"></div>
+    <div class="scrollup">
+      <!-- Иконка fa-chevron-up (Font Awesome) -->
+      <i class="fa fa-chevron-up"></i>
+    </div>`;
   }
 };
 
