@@ -23,3 +23,9 @@ div.scrollup:hover {
   background-color: #000; /* цвет заднего фона при наведении */
 }
 
+.visible{
+  display: block;
+}
+.unvisible{
+  display: none;
+}

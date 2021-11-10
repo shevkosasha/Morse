@@ -19,6 +19,7 @@ const NavBar = {
           <li><a class="mainmenu__link" href="#about">About Morse Code</a></li>
           <li><a class="mainmenu__link" href="#explore">Explore Morse Code</a></li>
           <li><a class="mainmenu__link" href="#practice">Practice Morse Code</a></li>
+          <li><a class="mainmenu__link" href="#challenge">Challenge Morse Code</a></li>
           <li><a class="mainmenu__link" href="#results">Table of results</a></li>
           <li><a class="mainmenu__link" href="#contacts">Контакты</a></li>
           </ul>

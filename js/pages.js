@@ -35,41 +35,35 @@ const About = {
 const Explore = {
   id: "explore",
   title: "Let's explore Morse Code",   
-  // decodeInputs: `  
-                                   
-  //             <div id="wrap_tArea" class="flex-container">
-  //               <div id="word"  class="flex-item">
-  //                 <h3>Type text in <span id="current_language">English</span> language</h3>
-  //                 <textarea rows="10" cols="45" name="text" id="code_word" class="code-word"></textarea>
-  //               </div>  
-  //               <div id="morse" class="flex-item">
-  //                 <h3>Type morse code</h3>
-  //                 <textarea rows="10" cols="45" name="text" id="decode_morse" class="decode-morse"></textarea>
-  //               </div>               
-  //             </div>
-
-  //             <div class="flex-container buttons">
-  //               <button class="flex-item clear">Clear</button>
-  //               <button class="flex-item play">Play</button>                              
-  //             </div>
-              
-               
-  //               `
-  // ,
+  
   render: (className = "container", contentContainer, ...rest) => {
     return `
             <div class="content-container">
               <section class="${className}">
                 <h1>Explore Morse Code</h1>
-                <div class="form_toggle quiz_language">
-                  <div class="form_toggle-item language latin">
-                    <input id="fid-latin" type="radio" class="lang" name="language" value="eng" checked>
-                    <label for="fid-latin">English</label>
-                  </div>
-                  <div class="form_toggle-item language cyrillic">
-                    <input id="fid-cyrillic" type="radio" class="lang" name="language" value="ru">
-                    <label for="fid-cyrillic">Russian</label>
-                  </div>
+                <div class="togglers">
+                  <div class="form_toggle quiz_language">
+                    <div class="form_toggle-item language latin">
+                      <input id="fid-latin" type="radio" class="lang" name="language" value="eng" checked>
+                      <label for="fid-latin">English</label>
+                    </div>
+                    <div class="form_toggle-item language cyrillic">
+                      <input id="fid-cyrillic" type="radio" class="lang" name="language" value="ru">
+                      <label for="fid-cyrillic">Russian</label>
+                    </div>
+                    <div class="form_toggle-item play">
+                      <!--<input id="fid-play" type="checkbox" class="play_checkbox" name="play_checkbox" value="play" checked>-->
+                      <label for="fid-play">
+                        <input id="fid-play" type="checkbox" class="play_checkbox" name="play_checkbox" value="play" checked>
+                        Play when clicked
+                      </label>
+                    </div>
+                    <div class="form_toggle-item transfer">
+                      <input id="fid-transfer" type="checkbox" class="transfer_checkbox" name="transfer_checkbox" value="transfer">
+                      <label for="fid-transfer">Transfer into textarea</label>
+                    </div>
+
+                  </div> 
                 </div>
                 <div class="alphabet"></div>
 
@@ -88,7 +82,7 @@ const Explore = {
                   <div class="flex-container buttons">
                     <button class="flex-item clear morseButton">Clear Fields</button>
                     <button class="flex-item play morseButton">Play Morse</button>
-                    <button id="morse_Button" class="flex-item tap morseButton">Tap Morse</button>                                        
+                    <button id="morse_button" class="flex-item tap morseButton">Tap Morse</button>                                        
                   </div>                  
                 </section>   
 
@@ -219,7 +213,6 @@ const Practice = {
     <div class="content-container">
       <section class="${className}">      
         <h1>Let's practice Morse Code</h1>
-        <!--<h2>Morse Code quiz</h2>-->
         <div id="choose_quiz_option">        
           <!--<button class="writing-quiz">Morse Code Character & Letter quiz</button><br><br>-->
           <!--<button class="audio-quiz">Audio Quiz&nbsp;&nbsp;&nbsp;></button><br>-->
@@ -258,6 +251,49 @@ const Practice = {
     </div>
      
     `;
+  }
+};
+
+
+const Challenge = {
+  id: "challenge",
+  title: "Let's chalenge Morse Code",   
+  challengePage:`
+  
+  `,
+  render: (className = "container", contentContainer, ...rest) => {
+    return `
+            <div class="content-container">
+              <section class="${className}">
+                <div class="btn-container">
+                  <a href="" class="gradient-button" id="start_challenge">Start challenge</a>                  
+                </div>
+                <div id="challenge">
+                
+                  <div id="challenge_question" class="unvisible">
+                      <h2>Click to image to play the code we've quessed</h2>
+                      <div id="question" class="unvisible">question</div>
+                      <div id="play_question"><img src="./img/noise.svg" alt="play" class = "img_play play-question"></div>
+                  </div>
+                  <div id="challenge_lives" class="unvisible">
+                    <div class="lives unvisible">
+                      <span class="active"></span>	
+                      <span class="active"></span>    
+                      <span class="active"></span>  
+                      <span class="active"></span>    
+                      <span class="active"></span>
+                    </div>
+                    <div class="current-result unvisible">                         
+                      <!--<span></span>-->
+                    </div>
+                  </div>
+                  <div id="alphabet_challenge" class="alphabet_challenge unvisible"></div>
+                </div> 
+              </section>
+            </div>  
+               
+            
+            `;
   }
 };
 

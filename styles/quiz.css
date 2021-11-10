@@ -115,7 +115,7 @@ span img:hover{
   color: white;
 }
 
-input[type="radio"] {
+/*input[type="checkbox"],*/ input[type="radio"] {
   position: relative;
   display: none;
 }
@@ -230,7 +230,7 @@ input[type="radio"] {
 }
 
 
-.form_toggle {
+.togglers, .form_toggle {
   display: flex;
   justify-content: center;
   overflow: hidden;
@@ -238,15 +238,13 @@ input[type="radio"] {
 }
 .form_toggle-item h2{
  
-  /* float: left; */
-  /* display: flex; */
-  /* display: inline-block; */
-  /* margin: auto; 
-  justify-content: center; */
 }
-.form_toggle-item input[type=radio] {
+/* .form_toggle-item input[type=checkbox] */
+.form_toggle-item input[type=radio]
+{
   display: none;
 }
+
 .form_toggle-item label {
   display: inline-block;
   padding: 0px 15px;   
@@ -285,7 +283,8 @@ input[type="radio"] {
 
 .form_toggle .language input[type=radio]:checked + label,
 .form_toggle .context input[type=radio]:checked + label,
-.form_toggle .level input[type=radio]:checked + label
+.form_toggle .level input[type=radio]:checked + label,
+.form_toggle .level input[type=checkbox]:checked + label
 {
   background: #bbffbb;
 }

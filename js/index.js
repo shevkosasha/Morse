@@ -15,6 +15,7 @@ const routes = {
   explore: Explore,
   practice: Practice,
   results: Results,
+  challenge: Challenge,
   default: HomePage,
   error: ErrorPage,
 };
@@ -46,9 +47,11 @@ const mySPA = (function(){
       window.document.title = routesObj[routeName].title;
       contentContainer.innerHTML = '';
       contentContainer.innerHTML = routesObj[routeName].render(`${routeName}-page`,contentContainer);
-      if (routeName === 'explore') {
-        this.createMorseTable();
+      if (routeName === 'explore' || routeName === 'challenge') {
+        this.createMorseTable(routeName);        
       }
+      if (routeName === 'challenge') this.disableBtns();
+
       if (routeName === 'practice') {
        myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
       }      
@@ -56,17 +59,25 @@ const mySPA = (function(){
       this.updateButtons(routesObj[routeName].id);
     },
 
-    this.createMorseTable = () => {   
+    this.disableBtns = () => {
+      myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => { btn.classList.add('disabled')})
+    }
 
+    this.createMorseTable = (routeName = 'explore') => {   
+      console.log(routeName);
       let arr = (language == 'eng') ? morseCode : morseCodeRus;
-      let div = myModuleContainer.querySelector('.alphabet');
-      div.innerHTML = '';
+      let div = (routeName === 'explore') ? myModuleContainer.querySelector('.alphabet') :
+                                            myModuleContainer.querySelector('.alphabet_challenge');
+      if (routeName === 'explore') div.innerHTML = '';
 
       for (let [symbol, code] of Object.entries(arr)){
         let btn = document.createElement('button');
-        btn.classList.add('alphabet-button');
-        btn.innerHTML = `<span class ="alpha">${symbol.toUpperCase()}</span> 
-                        <span class ="morse">${code}</span>`;                                  
+        (routeName === 'explore') ? btn.classList.add('alphabet-button') :
+                                    btn.classList.add('alphabet-challenge-btn');
+        btn.innerHTML = (routeName === 'explore') ? 
+                        `<span class ="alpha">${symbol.toUpperCase()}</span> <span class ="morse">${code}</span>` :
+                        `<span class ="alpha-challenge">${symbol.toUpperCase()}</span>`;    
+        // debugger;                              
         div.append(btn);
       }
     },
@@ -86,9 +97,64 @@ const mySPA = (function(){
     }
 
     this.select = (elem) => elem.classList.add('selected');
-    this.hideSelect = (elem) => elem.classList.remove('selected');
-    this.printMorseOrStr = (morseStr,field) =>field.value = morseStr; 
+    this.hideSelect = (elem) => elem.classList.remove('selected');    
     this.clearInput = (tArea1, tArea2) => tArea2.value = tArea1.value = '';
+
+    this.showCorrectOrFalse = (isCorrect) => {
+      // debugger;
+      myModuleContainer.querySelector('.current-result').innerHTML = ((isCorrect) ) ? '<span style="color: green"> CORRECT! </span>' 
+                                                                                    : '<span style="color: red"> FALSE! </span>';
+    },
+
+    this.challengeOver = () => {
+      myModuleContainer.querySelector('.current-result').innerHTML = '<span style="color: red"> Challenge is over! Try agaib </span>';
+    }
+
+    this.deleteOneLive = () => {
+      let heartSpans = myModuleContainer.querySelector('.lives').querySelectorAll('span');
+      for (let i = heartSpans.length-1; i >= 0; i--) {
+        console.log(heartSpans[i].classList);
+        if (heartSpans[i].classList.contains('active')) {
+          heartSpans[i].classList.remove('active');
+          break;
+        }
+      }
+    };
+
+    this.makeBtnGreen = (inner) => {
+      myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => {
+        let x = btn.querySelector('.alpha-challenge').textContent.toLowerCase();
+        if (inner.toLowerCase() === x) {
+          if (btn.classList.contains('right-1')) btn.classList.replace('right-1','right-2');
+          else if (btn.classList.contains('right-2')) btn.classList.replace('right-2','right-3');
+          else if (btn.classList.contains('right-3')) btn.classList.replace('right-3','right');
+          else {btn.classList.add('right-1'); }          
+        }
+      })
+    };
+
+    this.startChallenge = (level) => {
+      myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => { 
+        // debugger;
+        let x = btn.querySelector('.alpha-challenge').textContent.toLowerCase();
+        if (level.includes(x) ) {btn.classList.remove('disabled');}
+      });      
+      myModuleContainer.querySelector('#challenge_question').classList.remove('unvisible');
+      myModuleContainer.querySelector('#challenge_lives').classList.remove('unvisible');
+      myModuleContainer.querySelector('.lives').classList.remove('unvisible');
+      myModuleContainer.querySelector('.current-result').classList.remove('unvisible');
+      myModuleContainer.querySelector('#alphabet_challenge').classList.remove('unvisible');
+    }
+
+    this.printMorseOrStr = (morseStr,field, str = '') =>{
+      if (field) {
+        field.value = morseStr;
+      } else {
+        myModuleContainer.querySelector('#decode_morse').value = morseStr;
+        myModuleContainer.querySelector('#code_word').value = str;        
+      }
+      
+    }, 
 
     this.showToTopBtn = () => {
       myModuleContainer.querySelector('.scrollup').style.display = (window.pageYOffset > 250) ? 'block' : 'none';
@@ -145,8 +211,7 @@ const mySPA = (function(){
 
     this.removeQuiz = () => myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
 
-    this.showScoreModal = (result) => {
-      
+    this.showScoreModal = (result) => {      
       myModuleContainer.querySelector('#remarks').innerHTML = result.remark;
       myModuleContainer.querySelector('#remarks').style.color = result.remarkColor;
       myModuleContainer.querySelector('#grade-percentage').innerHTML = result.grade;
@@ -219,6 +284,11 @@ const mySPA = (function(){
   };
   /* -------- end view --------- */
 
+
+
+
+
+
   /* ------- begin model ------- */
   function ModuleModel () {
     let myModuleView = null;
@@ -228,7 +298,26 @@ const mySPA = (function(){
     let index = 0;
     let userdata = null;
     let answers = [];
-    let curExpLanguage = 'eng';    
+    let curExpLanguage = 'eng'; 
+    let audioData = {};    
+    let o = null;
+    let context = null;
+
+    let morse = {};
+    morse.ditMaxTime = 1200 / 15 * 0.3;
+    morse.letterGapMinTime = morse.ditMaxTime*3;
+    morse.wordGapMaxTime = morse.ditMaxTime*7;
+    morse.morseHistorySize = 50;
+    morse.charT = 0;
+    morse.gapT = 0;
+    morse.gapTimer = null;
+    morse.charTimer = null;
+    morse.buffer = '';
+    morse.isRunning = false;
+
+    let challengeData = {};
+    challengeData.points = 0;
+
     
     let playerScore = 0 ; //holds the player score
     let wrongAttempt = 0 ;//amount of wrong answers picked by player
@@ -246,7 +335,22 @@ const mySPA = (function(){
       myModuleView.setLanguage(lang);
     }
 
+    // this.createAudioCtx = () => {
+    //   var AudioContext = window.AudioContext || window.webkitAudioContext;
+    //   audioData.ctx = new AudioContext();
+    //   audioData.dot = 1.2 / 15;
+
+    //   var t = ctx.currentTime;
+
+    //   var oscillator = ctx.createOscillator();
+    //   oscillator.type = "sine";
+    //   oscillator.frequency.value = 600;
+
+    //   var gainNode = ctx.createGain();
+    // }
+
     this.playMorse = function(str){
+      if (!str) str = this.strToMorse(challengeData.curQuestion); // for challenge
       var AudioContext = window.AudioContext || window.webkitAudioContext;
       var ctx = new AudioContext();
       var dot = 1.2 / 15;
@@ -283,6 +387,107 @@ const mySPA = (function(){
       oscillator.start();
       // return false;
     },
+
+    this.checkGapBetweenInputs = () => {
+      if (morse.gapT >= morse.letterGapMinTime && morse.gapT < morse.wordGapMaxTime) {          
+          morse.buffer += ' ';         
+          clearInterval(morse.gapTimer);
+          morse.gapT  = 0;
+      }
+    }
+
+    this.startCharTimer = () => {
+        morse.charTimer = setInterval(() => {
+            morse.charT += 1;
+        }, 1);
+    }
+
+    this.stopCharTimer = () => {
+      clearInterval(morse.charTimer);
+      morse.charTimer = 0;
+      morse.charTime = 0;
+    }
+
+    this.startGapTimer = () => {
+        morse.gapT = 0;
+        morse.gapTimer = setInterval(() => {
+          morse.gapT += 1;
+
+            // Gap between words
+            if (morse.gapT >= morse.wordGapMaxTime) {
+                morse.buffer += '   ';
+                clearInterval(morse.gapTimer);
+                morse.gapTimer = 0;
+                morse.gapT = 0;
+            }
+            else if (morse.gapT >= morse.letterGapMinTime) {
+                morse.buffer += ' ';
+                clearInterval(morse.gapTimer);
+                morse.gapTimer = 0;
+                morse.gapT = 0;
+            }
+        }, 1);
+    }
+
+    this.handleMorseTapEnd = (e) => {
+      if (morse.isRunning) {
+        if ((e.target.id !== "morse_button") || (e.repeat)) {return}
+
+        morse.isRunning = false;
+        
+        if (morse.charT <= morse.ditMaxTime) {
+          morse.buffer += '.';
+        } else {
+          morse.buffer += '-';
+        }
+
+        this.stopCharTimer();
+        this.startGapTimer();
+        console.log(morse.buffer);
+        // myModuleView.printMorseOrStr(morse.buffer,'',this.morseToStr(morse.buffer))
+        
+        // Account for bug triggered when pressing paddle button (e.g.) outside of body, then clicking into body, and depressing key
+        // if (o === undefined) { 
+        //     return
+        // }
+        if (o.context.state === 'running') {
+            g.gain.setTargetAtTime(0.0001, context.currentTime, 0.001)
+            o.stop(context.currentTime + 0.05)
+        }
+      } else { return }
+      
+    }
+
+    this.handleMorseTapStart = (e) => {  
+
+      var AudioContext = window.AudioContext || window.webkitAudioContext;
+      var ctx = new AudioContext();      
+      context = ctx;
+      // debugger;
+      if (morse.isRunning) {return;} 
+      else {
+          morse.isRunning = true;
+          if (( e.target.id !== "morse_button") || (e.repeat)) {return;}
+          else {  
+              if (context.state === 'interrupted') {
+                context.resume();
+              }              
+              o = context.createOscillator();
+              o.frequency.value = 600;
+              o.type = "sine";
+              
+              g = context.createGain();
+              g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime);
+              o.connect(g);
+              g.connect(context.destination);
+              o.start();
+              this.checkGapBetweenInputs();
+              clearInterval(morse.gapTimer);  
+              this.startCharTimer();
+          }
+      }
+      
+    }
 
     this.strToMorse = (str, lang = '') => {
       let arr =[];
@@ -330,21 +535,24 @@ const mySPA = (function(){
       myModuleView.printMorseOrStr(phrase,elem);
     }
 
-    this.clearInput = (tArea1, tArea2) => { myModuleView.clearInput(tArea1, tArea2);};
+    this.clearInput = (tArea1, tArea2) => { 
+      morse.buffer = '';
+      myModuleView.clearInput(tArea1, tArea2);
+    };
 
     this.createQuiz = (obj) => {
       userdata = obj; 
-      let userJSON = JSON.stringify(userdata);
-      // console.log(userJSON);
+      // let userJSON = JSON.stringify(userdata);
+      // // console.log(userJSON);
       
-      this.addUser(userdata);
-      // const dbRef = firebase.database().ref();
-      let name = "my name";
-      let value = "John Smith"
-      // кодирует в my%20name=John%20Smith
-      console.log(document.cookie);
-      document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
-      console.log(document.cookie);
+      // this.addUser(userdata);
+      // // const dbRef = firebase.database().ref();
+      // let name = "my name";
+      // let value = "John Smith"
+      // // кодирует в my%20name=John%20Smith
+      // console.log(document.cookie);
+      // document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+      // console.log(document.cookie);
       
       if (!isQuizStarted) {
         isQuizStarted = true;
@@ -353,64 +561,7 @@ const mySPA = (function(){
         questions = Object.values(sessionQuestions);
         this.getNextQuestion();        
       }     
-    }
-
-    this.addUser = function(obj) {
-
-      let name = obj.name;
-
-      // myDB.ref("users/").once("value")
-      // .then(function(snapshot) {
-      //     console.log("Users list:");
-      //     console.log(snapshot.val());
-      // }).catch(function (error) {
-      //     console.log("Error: " + error.code);
-      // });
-
-      // myDBRef.child("users").child(name).get().then((snapshot) => {
-      //   if (snapshot.exists()) {
-      //     console.log(snapshot.val());
-      //   } else {
-      //     console.log("No data available");
-      //   }
-      // }).catch((error) => {
-      //   console.error(error);
-      // });
-
-      var newPostKey = firebase.database().ref().child('users').push().key;
-      console.log(newPostKey);
-      
-      // var ref = new Firebase("https://docs-examples.firebaseio.com/samplechat/users/fred");
-      myDBRef.once("value", function(snapshot) {
-        let a = snapshot.exists();
-        console.log(a);
-        // a === true
-        let b = snapshot.child("users").exists(); 
-        console.log(b);
-        // b === true
-        let c = snapshot.child("users/user_d265dd").exists();
-        console.log(c);
-        // c === true
-        let d = snapshot.child("words/156").exists();
-        console.log(d);
-        // d === false (because there is no "rooms/room0" child in the data snapshot)
-      }); 
-
-      // myDB.ref('users/' + `user_${name.toLowerCase()}`).set({
-      //       name: `${obj.name}`,
-      //       context: `${obj.context}`,
-      //       level: `${obj.level}`,
-      //       language: `${obj.language}`,
-      //   })
-      //   .then(function (name) {
-      //       console.log("Пользователь добавлен в коллецию users");
-      //   })
-      //   .catch(function (error) {
-      //       console.error("Ошибка добавления пользователя: ", error);
-      //   });
-
-        // this.updateUsersList();
-    }
+    }  
 
     this.setQuestions = function(){
       // debugger;
@@ -443,15 +594,11 @@ const mySPA = (function(){
         let itemQ, itemA; //current question and correct answer
        
         switch(level){
-          case 'easy':
-            // itemQ = random[0];
-            // itemA = random[1];    
+          case 'easy':  
             itemQ = (context === 'writing') ? random[0].toUpperCase() : random[1];
             itemA = (context === 'writing') ? random[1] : random[0].toUpperCase();         
             break;
           case 'medium':
-            // itemQ = random;
-            // itemA = this.strToMorse(random, lang);
             itemQ = (context === 'writing') ? random.toUpperCase() : this.strToMorse(random, lang);
             itemA = (context === 'writing') ? this.strToMorse(random, lang) : random.toUpperCase();
             break;
@@ -470,7 +617,6 @@ const mySPA = (function(){
                                                             num: correct};                                                            
           let options = sessionQuestions[`Q_${itemQ}`]['options'] = [];
           for( let j=0; j < 4; j++) {
-            // debugger;
             let item = (context === 'writing') ? values[Math.floor(Math.random() * values.length)] :
                                                  letters[Math.floor(Math.random() * letters.length)].toUpperCase();
             // let item = values[Math.floor(Math.random() * values.length)];
@@ -629,6 +775,63 @@ const mySPA = (function(){
       });
     }
 
+    this.setNextChallengeQuestion = (level) => {      
+      return question= level[Math.floor(Math.random() * level.length)];
+    }
+
+    this.startChallenge = () => {
+      let level = challengeData.level = levels[0];
+      challengeData.points = 0;
+      challengeData.lives = 4;
+      let q = challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
+      challengeData[`${q}`] = 0;
+      console.log(challengeData.level);
+      // console.log(challengeData.curQuestion);
+      myModuleView.startChallenge(level);
+      this.playMorse();
+    }
+
+    this.checkChallengeAnswer = (inner) => {
+      // debugger;      
+      console.log(challengeData.curQuestion, inner);
+      console.log(inner.toLowerCase() == challengeData.curQuestion.toLowerCase());
+      let q = challengeData.curQuestion;
+      console.log(q);
+      if (inner.toLowerCase() == challengeData.curQuestion.toLowerCase()) {
+        if (challengeData.hasOwnProperty(`${q}`)) {
+          // challengeData[`${q}`] = (challengeData[`${q}`] == 4) ? 'learned' : challengeData[`${q}`]++;
+          challengeData[`${q}`]++;
+          if (challengeData[`${q}`] == 4) {
+            challengeData[`${q}`] = 'learned';
+            challengeData.level =challengeData.level.filter((item) => item !== q);
+            console.log(challengeData.level);
+          }          
+        } else {
+          challengeData[`${q}`] = 1;
+        }        
+        myModuleView.showCorrectOrFalse(true);
+        myModuleView.makeBtnGreen(inner);
+        console.log(challengeData[`${q}`]);
+      } else {         
+        if (challengeData.lives > 0) {
+          challengeData.lives--;
+          myModuleView.showCorrectOrFalse(false);
+          myModuleView.deleteOneLive();
+        } else {
+          myModuleView.deleteOneLive();
+          myModuleView.challengeOver();
+        }        
+      }
+      console.log(challengeData);     
+      if (challengeData.level.length > 0) {
+        challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);              
+        this.playMorse();
+      } else {
+        myModuleView.challengeOver();
+      }
+      
+    }; 
+
   }
   /* -------- end model -------- */
 
@@ -649,10 +852,11 @@ const mySPA = (function(){
         }
         const hashPageName = location.hash.slice(1).toLowerCase();
         this.updateState(hashPageName); //первая отрисовка
-        this.addListeners(hashPageName);
+        // this.addListeners(hashPageName);
       }
 
       window.addEventListener("hashchange", update);
+      this.addListeners();
       this.addScrollHandler();
       // this.addMenuCloseHandler();
       update();
@@ -663,33 +867,76 @@ const mySPA = (function(){
       window.addEventListener('scroll', (e) => { myModuleModel.showToTopBtn();})     
       toTopBtn.addEventListener('click', () => { myModuleModel.toTop(); });
     },
-
-    // this.addMenuCloseHandler = (e) => {
-    //   myModuleContainer.addEventListener('click', (e) => {
-    //     console.log(e.target);
-    //   })
-    // }
     
     this.updateState = function(page) {        
       myModuleModel.updateState(page);        
     },   
 
-    this.addListeners = function(page){
-      console.log(page); 
+    this.addListeners = function(){
+      // console.log(page); 
+      console.log(myModuleContainer.querySelector(`.content`)); 
+      // if (page === 'results') myModuleModel.printUsersList();   
 
-      if (page === 'explore') this.addExplorePageListeners();
-      if (page === 'practice') this.addPracticePageListeners();
-      if (page === 'results') myModuleModel.printUsersList();      
-    },
+      /////*****   EXPLORE PAGE LISTENERS *****/////
+      myModuleContainer.querySelector('.content').addEventListener('click', (e) => {
 
-    this.addPracticePageListeners = function(){
+        if (e.target.classList.contains('alphabet-button') || 
+            e.target.classList.contains('morse') || 
+            e.target.classList.contains('alpha')) {
+          let inner;               
+          switch (e.target.className) {                        
+              case 'morse': inner = e.target.innerHTML; break;
+              case 'alpha': inner = e.target.parentNode.querySelector('.morse').innerHTML; break;
+              case 'alphabet-button': inner = e.target.querySelector('.morse').innerHTML; break;
+          }
+          myModuleModel.playMorse(inner);           
+        }
 
-      myModuleContainer.querySelector(`.content`).addEventListener('click', (e) => {
+        if (e.target.classList.contains('clear')) {
+          e.preventDefault();
+          myModuleModel.clearInput(myModuleContainer.querySelector('.code-word'), myModuleContainer.querySelector('.decode-morse'));
+        };
 
-        let userdata = {};
-        const inputs = myModuleContainer.querySelectorAll('input');
+        if (e.target.classList.contains('play')){
+          e.preventDefault();
+          let inner = myModuleContainer.querySelector('.decode-morse').value;
+          myModuleModel.playMorse(inner);
+        }
+
+        if (e.target.classList.contains('lang')){
+          myModuleModel.setLanguage(e.target.value);
+        }
+
+        if (e.target.classList.contains('code-word')){          
+          const inputHandler = (e) => {
+            let value =  myModuleContainer.querySelector('.code-word').value;
+            myModuleModel.codeMorse(value, myModuleContainer.querySelector('#decode_morse'));
+          }
+          myModuleContainer.querySelector('.code-word').addEventListener('input', inputHandler);
+          myModuleContainer.querySelector('.code-word').addEventListener('blur', (e) => {
+            myModuleContainer.querySelector('.code-word').removeEventListener('input', inputHandler);
+          });
+        }
+        
+        if (e.target.classList.contains('decode-morse')){          
+          const inputHandler = (e) => {
+            let value =  myModuleContainer.querySelector('.decode-morse').value;
+            myModuleModel.decodeMorse(value, myModuleContainer.querySelector('#code_word'));
+          }
+          myModuleContainer.querySelector('.decode-morse').addEventListener('input', inputHandler);
+          myModuleContainer.querySelector('.decode-morse').addEventListener('blur', (e) => {
+            myModuleContainer.querySelector('.decode-morse').removeEventListener('input', inputHandler);
+          });
+        }
+
+        // myModuleContainer.querySelector('#morse_button').addEventListener('mousedown', myModuleModel.handleMorseTapStart);
+        // myModuleContainer.querySelector('#morse_button').addEventListener('mouseup', myModuleModel.handleMorseTapEnd);
+
+        /////*****   PRACTICE PAGE LISTENERS *****/////
+
         if (e.target.className === 'start-quiz-button') {
-
+          const inputs = myModuleContainer.querySelectorAll('input');
+          let userdata = {};
           inputs.forEach(input => {
             if (input.type === 'text' && input.name === 'user') {
               userdata.name = input.value;
@@ -704,9 +951,7 @@ const mySPA = (function(){
               }              
             }
           })
-          // console.log(userdata);
           if (!userdata.name) {
-            // debugger;
             myModuleModel.showWarning();
           } else {
             myModuleModel.createQuiz(userdata);
@@ -715,9 +960,32 @@ const mySPA = (function(){
 
         }
 
-      })
 
-    }
+        /////*****   CHALLENGE PAGE LISTENERS *****/////
+        if (e.target.id === 'start_challenge') {
+          e.preventDefault();
+          myModuleModel.startChallenge();
+        }
+
+        if (e.target.classList.contains('alpha-challenge') || e.target.classList.contains('alphabet-challenge-btn')) {
+          if (e.target.classList.contains('alpha-challenge') && e.target.parentNode.classList.contains('disabled')) {
+            return;
+          } else if (e.target.classList.contains('disabled')){
+            return;
+          } else {
+            e.preventDefault();
+            let inner = (e.target.classList.contains('alpha-challenge')) ? 
+                        e.target.innerHTML : e.target.querySelector('.alpha-challenge').innerHTML;
+            console.log(inner);
+            myModuleModel.checkChallengeAnswer(inner);        
+          }
+        }
+
+        if (e.target.classList.contains("play-question")) {myModuleModel.playMorse();}
+
+      })        
+      
+    },
 
     this.quizHandler = (e) => {
       e.preventDefault();
@@ -762,58 +1030,6 @@ const mySPA = (function(){
       }
 
     } 
-    
-
-    this.addExplorePageListeners = function(){
-      myModuleContainer.querySelector(`.content`).addEventListener('click', (e) => {
-
-        if (e.target.classList.contains('alphabet-button') || 
-            e.target.classList.contains('morse') || 
-            e.target.classList.contains('alpha')) {
-          let inner;               
-          switch (e.target.className) {                        
-              case 'morse': inner = e.target.innerHTML; break;
-              case 'alpha': inner = e.target.parentNode.querySelector('.morse').innerHTML; break;
-              case 'alphabet-button': inner = e.target.querySelector('.morse').innerHTML; break;
-          }
-          myModuleModel.playMorse(inner);           
-        }
-
-        if (e.target.classList.contains('clear')) {
-          e.preventDefault();
-          myModuleModel.clearInput(myModuleContainer.querySelector('.code-word'), myModuleContainer.querySelector('.decode-morse'));
-        };
-
-        if (e.target.classList.contains('play')){
-          e.preventDefault();
-          let inner = myModuleContainer.querySelector('.decode-morse').value;
-          myModuleModel.playMorse(inner);
-        }
-
-        if (e.target.classList.contains('tap')){
-          e.preventDefault();
-          console.log('tap');
-        }
-
-        if (e.target.classList.contains('lang')){
-          myModuleModel.setLanguage(e.target.value);
-        }
-      })
-
-      const textareas = document.querySelectorAll('textarea');
-      textareas.forEach(tArea => {
-        if (tArea.classList.contains('code-word')) {
-          tArea.addEventListener('input', (e) => { 
-            myModuleModel.codeMorse(tArea.value, myModuleContainer.querySelector('#decode_morse'));       
-          });
-        }
-        else {
-          tArea.addEventListener('input', (e) => {
-            myModuleModel.decodeMorse(tArea.value, myModuleContainer.querySelector('#code_word'));            
-          });
-        }
-      })    
-    }
 
   }
 
