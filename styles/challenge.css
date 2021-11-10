@@ -189,6 +189,7 @@
 
   .disabled {
     background: #c3c9c6;
+    color: black;
     transition: none !important;
   }
   .disabled:hover {

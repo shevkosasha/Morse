@@ -101,13 +101,13 @@ const mySPA = (function(){
     this.clearInput = (tArea1, tArea2) => tArea2.value = tArea1.value = '';
 
     this.showCorrectOrFalse = (isCorrect) => {
-      // debugger;
       myModuleContainer.querySelector('.current-result').innerHTML = ((isCorrect) ) ? '<span style="color: green"> CORRECT! </span>' 
                                                                                     : '<span style="color: red"> FALSE! </span>';
     },
 
     this.challengeOver = () => {
       myModuleContainer.querySelector('.current-result').innerHTML = '<span style="color: red"> Challenge is over! Try agaib </span>';
+      myModuleContainer.querySelector('.gradient-button').classList.remove('disabled');      
     }
 
     this.deleteOneLive = () => {
@@ -137,8 +137,12 @@ const mySPA = (function(){
       myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => { 
         // debugger;
         let x = btn.querySelector('.alpha-challenge').textContent.toLowerCase();
-        if (level.includes(x) ) {btn.classList.remove('disabled');}
-      });      
+        if (level.includes(x) ) {
+          btn.classList.remove('disabled');
+          btn.classList.remove('right');
+        }
+      });     
+      myModuleContainer.querySelector('.gradient-button').classList.add('disabled');
       myModuleContainer.querySelector('#challenge_question').classList.remove('unvisible');
       myModuleContainer.querySelector('#challenge_lives').classList.remove('unvisible');
       myModuleContainer.querySelector('.lives').classList.remove('unvisible');
@@ -315,8 +319,13 @@ const mySPA = (function(){
     morse.buffer = '';
     morse.isRunning = false;
 
-    let challengeData = {};
-    challengeData.points = 0;
+    let isChallengeStarted = false;
+    let challengeData = {
+      levelsComplited: [],
+      learned:[],
+      points: 0,
+    };
+    let challengeLevel = 0; 
 
     
     let playerScore = 0 ; //holds the player score
@@ -780,15 +789,22 @@ const mySPA = (function(){
     }
 
     this.startChallenge = () => {
-      let level = challengeData.level = levels[0];
-      challengeData.points = 0;
-      challengeData.lives = 4;
-      let q = challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
-      challengeData[`${q}`] = 0;
-      console.log(challengeData.level);
-      // console.log(challengeData.curQuestion);
-      myModuleView.startChallenge(level);
-      this.playMorse();
+      if (!isChallengeStarted) {
+        // const array1 = ['a', 'b', 'c'];
+        // const array2 = ['d', 'e', 'f'];
+        // const array3 = array1.concat(array2);
+        let level = challengeData.level = levels[challengeLevel].concat(challengeData.learned);
+        // let level = challengeData.level = levels[challengeLevel].map((x) => x);
+        challengeData.sample = levels[challengeLevel].map((x) => x);
+        challengeData.points = 0;
+        challengeData.lives = 4;
+        let q = challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
+        // challengeData[`${q}`] = 0;
+        console.log(challengeData.level);
+        myModuleView.startChallenge(level);
+        this.playMorse();
+        isChallengeStarted = true;
+      }      
     }
 
     this.checkChallengeAnswer = (inner) => {
@@ -802,7 +818,10 @@ const mySPA = (function(){
           // challengeData[`${q}`] = (challengeData[`${q}`] == 4) ? 'learned' : challengeData[`${q}`]++;
           challengeData[`${q}`]++;
           if (challengeData[`${q}`] == 4) {
-            challengeData[`${q}`] = 'learned';
+            // challengeData[`${q}`] = 'learned'; 
+            if (!challengeData.learned.includes(q)) challengeData.learned.push(q);         
+            // challengeData.learned.push(q);
+            delete challengeData[`${q}`]; 
             challengeData.level =challengeData.level.filter((item) => item !== q);
             console.log(challengeData.level);
           }          
@@ -811,7 +830,7 @@ const mySPA = (function(){
         }        
         myModuleView.showCorrectOrFalse(true);
         myModuleView.makeBtnGreen(inner);
-        console.log(challengeData[`${q}`]);
+        // console.log(challengeData[`${q}`]);
       } else {         
         if (challengeData.lives > 0) {
           challengeData.lives--;
@@ -820,14 +839,22 @@ const mySPA = (function(){
         } else {
           myModuleView.deleteOneLive();
           myModuleView.challengeOver();
+          myModuleView.disableBtns();
+          isChallengeStarted = false;
         }        
       }
       console.log(challengeData);     
       if (challengeData.level.length > 0) {
-        challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);              
+        challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
         this.playMorse();
       } else {
         myModuleView.challengeOver();
+        myModuleView.disableBtns();
+        isChallengeStarted = false;
+        challengeLevel++;
+        let levelComplited = challengeData.sample.map(x => x);
+        challengeData.levelsComplited.push(levelComplited);
+        debugger;
       }
       
     }; 
@@ -962,9 +989,14 @@ const mySPA = (function(){
 
 
         /////*****   CHALLENGE PAGE LISTENERS *****/////
+        let isStarted = false;
         if (e.target.id === 'start_challenge') {
           e.preventDefault();
-          myModuleModel.startChallenge();
+          if (!isStarted) {
+            myModuleModel.startChallenge();
+            isStarted = true;
+          }
+          
         }
 
         if (e.target.classList.contains('alpha-challenge') || e.target.classList.contains('alphabet-challenge-btn')) {
