@@ -8,7 +8,7 @@
 div.scrollup {
   position: fixed; /* фиксированная позиция */
   color: #fff; /* цвет текста */
-  background-color: #357581; /* цвет заднего фона */
+  background-color: #1e90ff; /* цвет заднего фона */
   right: 20px; /* расстояние от правого края */
   bottom: 0px; /* расстояние от нижнего края */
   padding: 4px 10px; /* отступы до содержимого блока */
@@ -21,6 +21,34 @@ div.scrollup {
 }
 div.scrollup:hover {
   background-color: #000; /* цвет заднего фона при наведении */
+}
+/* Set a style for all buttons */
+.log-out, .log-in {
+  background-color: #bbffbb;;
+  color: black;
+  padding: 14px 20px;
+  margin: 20px;
+  margin-top: 3px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  float: right;
+  clear: both;
+}
+
+.log-out:hover,
+.log-out:hover {
+  opacity: 0.8;
+}
+.hi-section{
+  float: right;
+  vertical-align: center;
+  margin: 20px;
+  clear: both;
+}
+.log-and-hi{
+  clear: both;
+
 }
 
 .visible{

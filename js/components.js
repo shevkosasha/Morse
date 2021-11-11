@@ -1,8 +1,10 @@
 const Header = {
   render: (customClass = "") => {
     return `
-      
-      
+    <div class="log-and-hi">
+      <button class="log-out" style="width:auto;">Log out</button>
+      <div class="hi-section">Hi man</div>
+    </div>  
     `;
   }
 };
@@ -20,8 +22,8 @@ const NavBar = {
           <li><a class="mainmenu__link" href="#explore">Explore Morse Code</a></li>
           <li><a class="mainmenu__link" href="#practice">Practice Morse Code</a></li>
           <li><a class="mainmenu__link" href="#challenge">Challenge Morse Code</a></li>
-          <li><a class="mainmenu__link" href="#results">Table of results</a></li>
-          <li><a class="mainmenu__link" href="#registration">Registration</a></li>
+          <!--<li><a class="mainmenu__link" href="#results">Table of results</a></li>-->
+          <li><a class="mainmenu__link" href="#login">Login Form</a></li>
           </ul>
         </div>
         </nav>

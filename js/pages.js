@@ -18,9 +18,9 @@ const HomePage = {
   }
 };
 
-const Registration = {
-  id: "registration",
-  title: "registration",
+const LoginForm = {
+  id: "Main",
+  title: "Main",
   render: (className = "container", ...rest) => {
     return `    
     <div class="content-container">
@@ -97,16 +97,13 @@ const Explore = {
                       <input id="fid-cyrillic" type="radio" class="lang" name="language" value="ru">
                       <label for="fid-cyrillic">Russian</label>
                     </div>
-                    <div class="form_toggle-item play">
-                      <!--<input id="fid-play" type="checkbox" class="play_checkbox" name="play_checkbox" value="play" checked>-->
-                      <label for="fid-play">
-                        <input id="fid-play" type="checkbox" class="play_checkbox" name="play_checkbox" value="play" checked>
-                        Play when clicked
-                      </label>
+                    <div class="form_toggle-item play-code">
+                      <input id="fid-play" type="checkbox" class="play_checkbox" name="play_checkbox" value="play" checked>
+                      <label for="fid-play" class="play_checkbox_lebel">Play when clicked</label> 
                     </div>
                     <div class="form_toggle-item transfer">
-                      <input id="fid-transfer" type="checkbox" class="transfer_checkbox" name="transfer_checkbox" value="transfer">
-                      <label for="fid-transfer">Transfer into textarea</label>
+                      <input id="fid-transfer" type="checkbox" class="transfer_checkbox" name="transfer_checkbox" value="transfer" checked>
+                      <label for="fid-transfer" class="transfer_checkbox_label">Transfer into textarea</label>
                     </div>
 
                   </div> 
@@ -257,7 +254,7 @@ const Practice = {
   render: (className = "container", ...rest) => {
     return `
     <div class="content-container">
-      <section class="${className}">      
+      <section class="${className}"> 
         <h1>Let's practice Morse Code</h1>
         <div id="choose_quiz_option">        
           <!--<button class="writing-quiz">Morse Code Character & Letter quiz</button><br><br>-->
@@ -311,6 +308,17 @@ const Challenge = {
     return `
             <div class="content-container">
               <section class="${className}">
+                <!--<div class="form_toggle quiz_language">
+                  <div class="form_toggle-item language latin">
+                    <input id="fid-latin" type="radio" class="lang" name="language" value="eng" checked>
+                    <label for="fid-latin">English</label>
+                  </div>
+                  <div class="form_toggle-item language cyrillic">
+                    <input id="fid-cyrillic" type="radio" class="lang" name="language" value="ru">
+                    <label for="fid-cyrillic">Russian</label>
+                  </div>
+                </div> -->
+
                 <div class="btn-container">
                   <a href="" class="gradient-button start-challenge" id="start_challenge">Start challenge</a>  
                   <a href="" class="gradient-button stop-challenge unvisible disabled" id="stop_challenge">Stop challenge</a> 

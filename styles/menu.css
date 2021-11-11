@@ -19,7 +19,8 @@ h1{
   z-index: 0;
   padding: 10px;
   max-width: 75%;
-  margin: 0 auto;
+  margin: auto;
+  /* margin-left: 250 px; */
   overflow: hidden;
   transition: all 300ms ease-in-out;
 }

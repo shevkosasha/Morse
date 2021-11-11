@@ -2,7 +2,6 @@
 const components = {
   header: Header,
   navbar: NavBar,
-  // header: Header,
   content: Content,
   // footer: Footer,
 };
@@ -10,8 +9,7 @@ const components = {
 // Список поддердживаемых роутов (from pages.js)
 const routes = {
   main: HomePage,
-  // about: About,
-  registration: Registration,
+  login: LoginForm,
   explore: Explore,
   practice: Practice,
   results: Results,
@@ -39,7 +37,6 @@ const mySPA = (function(){
 
     this.renderContent = function(hashPageName) {
       let routeName = "default";
-      // debugger;
       if (hashPageName.length > 0) {
         routeName = hashPageName in routes ? hashPageName : "error";
       }
@@ -55,9 +52,22 @@ const mySPA = (function(){
       if (routeName === 'practice') {
        myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
       }      
-      
+      this.showLoginForm();
       this.updateButtons(routesObj[routeName].id);
     },
+
+    this.showLoginForm = () => {LoginForm.render()}
+    this.sayHi = (user) => {
+      myModuleContainer.querySelector('.hi-section').textContent = `Hi ${user}`;
+      document.querySelector('.log-in').textContent = 'Log out';
+      document.querySelector('.log-out').classList.replace('log-in','log-out');
+    }
+
+    this.logOut = () => {
+      document.querySelector('.hi-section').textContent = 'Bye';
+      document.querySelector('.log-out').textContent = 'Log in';
+      document.querySelector('.log-out').classList.replace('log-out','log-in');
+    }
 
     this.disableBtns = () => {
       myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => { btn.classList.add('disabled')})
@@ -68,7 +78,8 @@ const mySPA = (function(){
       let arr = (language == 'eng') ? morseCode : morseCodeRus;
       let div = (routeName === 'explore') ? myModuleContainer.querySelector('.alphabet') :
                                             myModuleContainer.querySelector('.alphabet_challenge');
-      if (routeName === 'explore') div.innerHTML = '';
+      // if (routeName === 'explore') 
+      div.innerHTML = '';
 
       for (let [symbol, code] of Object.entries(arr)){
         let btn = document.createElement('button');
@@ -93,8 +104,13 @@ const mySPA = (function(){
    
     this.setLanguage = (lang) => {
       language = lang;
-      myModuleContainer.querySelector('#current_language').textContent = (language === 'eng') ? 'English' : 'Russian';
-      this.createMorseTable();
+      if (myModuleContainer.querySelector('#current_language')) {        
+        myModuleContainer.querySelector('#current_language').textContent = (language === 'eng') ? 'English' : 'Russian';
+        this.createMorseTable();
+      } else {
+        this.createMorseTable('challenge');
+      }
+      
     }
 
     this.updateButtons = function(currentPage) {
@@ -321,6 +337,9 @@ const mySPA = (function(){
     let audioData = {};    
     let o = null;
     let context = null;
+    let isTransfer = true;
+    let buffer = '';
+    let isAudio = true;
 
     let morse = {};
     morse.ditMaxTime = 1200 / 15 * 0.3;
@@ -345,6 +364,8 @@ const mySPA = (function(){
     
     let playerScore = 0 ; //holds the player score
     let wrongAttempt = 0 ;//amount of wrong answers picked by player
+
+    const that = this;
 
     this.init = function(view) {
       myModuleView = view;
@@ -373,42 +394,45 @@ const mySPA = (function(){
     //   var gainNode = ctx.createGain();
     // }
 
-    this.playMorse = function(str){
-      if (!str) str = this.strToMorse(challengeData.curQuestion); // for challenge
-      var AudioContext = window.AudioContext || window.webkitAudioContext;
-      var ctx = new AudioContext();
-      var dot = 1.2 / 15;
+    this.playMorse = function(str,on){
+      if (!on) on = isAudio;
+      if (on){
+        if (!str) str = this.strToMorse(challengeData.curQuestion); // for challenge
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        var ctx = new AudioContext();
+        var dot = 1.2 / 15;
 
-      var t = ctx.currentTime;
+        var t = ctx.currentTime;
 
-      var oscillator = ctx.createOscillator();
-      oscillator.type = "sine";
-      oscillator.frequency.value = 600;
+        var oscillator = ctx.createOscillator();
+        oscillator.type = "sine";
+        oscillator.frequency.value = 600;
 
-      var gainNode = ctx.createGain();
-      gainNode.gain.setValueAtTime(0, t);
-      str.split("").forEach((letter) => {
-          switch(letter) {
-              case ".":
-                  gainNode.gain.setValueAtTime(1, t);
-                  t += dot;
-                  gainNode.gain.setValueAtTime(0, t);
-                  t += dot;
-                  break;
-              case "-":
-                  gainNode.gain.setValueAtTime(1, t);
-                  t += 3 * dot;
-                  gainNode.gain.setValueAtTime(0, t);
-                  t += dot;
-                  break;
-              case " ":
-                  t += 7 * dot;
-                  break;
-          }
-      });
-      oscillator.connect(gainNode);
-      gainNode.connect(ctx.destination);
-      oscillator.start();
+        var gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(0, t);
+        str.split("").forEach((letter) => {
+            switch(letter) {
+                case ".":
+                    gainNode.gain.setValueAtTime(1, t);
+                    t += dot;
+                    gainNode.gain.setValueAtTime(0, t);
+                    t += dot;
+                    break;
+                case "-":
+                    gainNode.gain.setValueAtTime(1, t);
+                    t += 3 * dot;
+                    gainNode.gain.setValueAtTime(0, t);
+                    t += dot;
+                    break;
+                case " ":
+                    t += 7 * dot;
+                    break;
+            }
+        });
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.start();
+      }      
       // return false;
     },
 
@@ -520,9 +544,7 @@ const mySPA = (function(){
       } else {
         arr = (curExpLanguage == 'eng') ? morseCode : morseCodeRus;
       }
-      // let arr = (lang == 'eng') ? morseCode : morseCodeRus;
       let res = str.split('').map(i => {
-        // debugger;
         i = i.toLowerCase();
         return (arr[i]) ? arr[i] : ( i === ' ') ? ' ' : '[?]';          
       }).join(' ');
@@ -560,8 +582,26 @@ const mySPA = (function(){
     }
 
     this.clearInput = (tArea1, tArea2) => { 
-      morse.buffer = '';
+      buffer = morse.buffer = '';
       myModuleView.clearInput(tArea1, tArea2);
+    };
+
+    this.switchAudio = (checked) => {
+      isAudio = checked;
+      console.log(isAudio);
+    };
+
+    this.switchTransfer = (checked) => {
+      isTransfer = checked;
+      console.log(isTransfer);
+    };
+
+    this.sendToTArea = (inner,strTArea,codeTArea) => {
+      if (isTransfer) {
+        buffer += ' ' + inner;
+        myModuleView.printMorseOrStr(buffer,codeTArea);
+        myModuleView.printMorseOrStr(this.morseToStr(buffer),strTArea);
+      }
     };
 
     this.createQuiz = (obj) => {
@@ -786,7 +826,7 @@ const mySPA = (function(){
       .then(function(snapshot) {
           console.log("Users list:");
           console.log(snapshot.val());
-          myModuleView.printUser(snapshot.val());
+          // myModuleView.printUser(snapshot.val());
       }).catch(function (error) {
           console.log("Error: " + error.code);
       });
@@ -818,7 +858,7 @@ const mySPA = (function(){
         // challengeData[`${q}`] = 0;
         console.log(challengeData.level);
         myModuleView.startChallenge(level);
-        this.playMorse();
+        this.playMorse(false,true);
         isChallengeStarted = true;
       }      
     }
@@ -858,7 +898,7 @@ const mySPA = (function(){
       console.log(challengeData);     
       if (challengeData.level.length > 0) {
         challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
-        this.playMorse();
+        this.playMorse(false,true);
       } else {
         myModuleView.challengeOver();
         myModuleView.disableBtns();
@@ -866,13 +906,106 @@ const mySPA = (function(){
         challengeLevel++;
         let levelComplited = challengeData.sample.map(x => x);
         challengeData.levelsComplited.push(levelComplited);
-        debugger;
+        // debugger;
       }
       
     }; 
     this.stopChallenge = () => {
       myModuleView.challengeOver();
       isChallengeStarted = false;
+    }
+
+    ///** firebase functions **////
+    // const that = this;
+    this.login = function(userEmail, userPass) {
+      
+      if (userEmail && userPass) {
+        firebase.auth().signInWithEmailAndPassword(userEmail, userPass)
+        .catch(function(error) {
+          console.log("Error: " + error.message);
+          // myModuleView.loginError("Неверный email или пароль. Введите корректные данные.");
+          console.log("Неверный email или пароль. Введите корректные данные.");
+        });
+        
+        firebase.auth().onAuthStateChanged(function(user) {
+          let userData = null, userDataName = null, username = null;
+          console.log('success');
+          if (user) {
+            console.log(user.email);
+            myDBRef.child("users").orderByChild("email").equalTo(`${user.email}`).once("value",snapshot => {
+              if (snapshot.exists()){
+                userData = snapshot.val();
+                userDataName = Object.keys(userData);
+                username = userData[userDataName].username;
+                // myModuleView.sayHi(username);
+              }
+            }).then(() => {
+              console.log(userData);
+              console.log(userDataName);
+              console.log(username);
+              myModuleView.sayHi(username);
+            }).catch(function (error) {
+                console.log("Error: " + error.code);
+            });;
+            
+            
+            // myDBRef.once("value", (snapshot) => {
+            //   let a = snapshot.exists();
+            //   console.log(a);
+            //   // a === true
+            //   let b = snapshot.child("users").exists(); 
+            //   console.log(b);
+            //   // b === true
+            //   let c = snapshot.child("users/user_abc").exists();
+            //   console.log(c);
+            //   // c === true
+            //   let d = snapshot.child("users/user_abc/email").exists();
+            //   console.log(d);
+            //   let e = snapshot.child("users/user_abc/email").val();
+            //   console.log(e);
+            //   // d === false (because there is no "rooms/room0" child in the data snapshot)
+            // }); 
+
+            // myDBRef.once('value', this.getData, errData);
+            // console.log(user)
+            // that.getData(snapshot);
+            // var ref = firebase.database().ref();
+            
+            // console.log(myDBRef);
+            // myDBRef
+            // var a = snapshot.exists();
+            // User is signed in.
+            myModuleView.renderContent('explore');
+            // that.getUsersList();
+            // that.printUsersList();
+          } else {
+            // No user is signed in.
+            // myAppView.hideForm();
+            console.log('no user signed in')
+          }
+        });
+      } else {
+        console.log("Пустое поле Email или Password. Введите данные в указанные поля.");
+      }
+    }
+
+    this.logout = function() {
+      firebase.auth().signOut();      
+      console.log("Пшёл вон! =)");
+      myModuleView.logOut();
+    }
+
+    this.getData = (snapshot) => {
+      myDBRef.child("users").orderByChild("email").equalTo(`${user.email}`).once("value",snapshot => {
+        if (snapshot.exists()){
+          const userData = snapshot.val();
+          var userDataName = Object.keys(userData);
+          var username = userData[userDataName].username;
+          console.log(username);
+          debugger;
+          this.view.sayHi(username);
+        }
+      });
     }
 
   }
@@ -899,6 +1032,14 @@ const mySPA = (function(){
       }
 
       window.addEventListener("hashchange", update);
+      window.addEventListener('click',(e) => {
+        if (e.target.classList.contains('log-out')) {
+          // e.preventDefault();
+          // e.stopPropagation();
+          console.log('log out');
+          myModuleModel.logout();
+        }
+      })
       this.addListeners();
       this.addScrollHandler();
       // this.addMenuCloseHandler();
@@ -922,17 +1063,20 @@ const mySPA = (function(){
 
       /////*****   EXPLORE PAGE LISTENERS *****/////
       myModuleContainer.querySelector('.content').addEventListener('click', (e) => {
+        // console.log(e.target);
 
         if (e.target.classList.contains('alphabet-button') || 
             e.target.classList.contains('morse') || 
             e.target.classList.contains('alpha')) {
-          let inner;               
+          let inner;
+          let checked = myModuleContainer.querySelector('.play_checkbox').checked;            
           switch (e.target.className) {                        
               case 'morse': inner = e.target.innerHTML; break;
               case 'alpha': inner = e.target.parentNode.querySelector('.morse').innerHTML; break;
               case 'alphabet-button': inner = e.target.querySelector('.morse').innerHTML; break;
           }
-          myModuleModel.playMorse(inner);           
+          myModuleModel.playMorse(inner,checked); 
+          myModuleModel.sendToTArea(inner,myModuleContainer.querySelector('#code_word'), myModuleContainer.querySelector('#decode_morse'));          
         }
 
         if (e.target.classList.contains('clear')) {
@@ -943,7 +1087,7 @@ const mySPA = (function(){
         if (e.target.classList.contains('play')){
           e.preventDefault();
           let inner = myModuleContainer.querySelector('.decode-morse').value;
-          myModuleModel.playMorse(inner);
+          myModuleModel.playMorse(inner,true);
         }
 
         if (e.target.classList.contains('lang')){
@@ -971,6 +1115,15 @@ const mySPA = (function(){
             myModuleContainer.querySelector('.decode-morse').removeEventListener('input', inputHandler);
           });
         }
+
+        if (e.target.classList.contains('transfer_checkbox') ) {          
+          myModuleModel.switchTransfer(e.target.checked);
+        }
+
+        if (e.target.classList.contains('play_checkbox') ) {          
+          myModuleModel.switchAudio(e.target.checked);
+        }
+
 
         // myModuleContainer.querySelector('#morse_button').addEventListener('mousedown', myModuleModel.handleMorseTapStart);
         // myModuleContainer.querySelector('#morse_button').addEventListener('mouseup', myModuleModel.handleMorseTapEnd);
@@ -1030,7 +1183,7 @@ const mySPA = (function(){
           }
         }
 
-        if (e.target.classList.contains("play-question")) {myModuleModel.playMorse();}
+        if (e.target.classList.contains("play-question")) {myModuleModel.playMorse(false,true);}
 
 
         /////*****   REGISTRATION PAGE LISTENERS *****/////
@@ -1038,6 +1191,23 @@ const mySPA = (function(){
         if (e.target.classList.contains('switcher')){
           e.preventDefault();
           myModuleModel.switchForm(e.target);
+        }
+
+        // btn-login, btn-signup
+        if (e.target.classList.contains('btn-login')) {
+          e.preventDefault();
+          e.stopPropagation();
+          myModuleModel.login(
+              myModuleContainer.querySelector("#login-email").value,
+              myModuleContainer.querySelector("#login-password").value,
+          );
+        }
+
+        if (e.target.classList.contains('log-out')) {
+          // e.preventDefault();
+          // e.stopPropagation();
+          console.log('log out');
+          myModuleModel.logout();
         }
         
       })        
@@ -1075,7 +1245,7 @@ const mySPA = (function(){
       if (e.target.classList.contains("img_play")) {
         let str = (e.target.classList.contains("answer")) ? e.target.parentNode.querySelector('.option').textContent :
                                                             e.target.parentNode.querySelector('#display-question').textContent;
-        myModuleModel.playMorse(str);
+        myModuleModel.playMorse(str,true);
       }
 
       if (e.target.className === 'close-btn' || e.target.className === 'closeScoreModal'){
