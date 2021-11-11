@@ -10,8 +10,8 @@ const components = {
 // Список поддердживаемых роутов (from pages.js)
 const routes = {
   main: HomePage,
-  about: About,
-  contacts: Contacts,
+  // about: About,
+  registration: Registration,
   explore: Explore,
   practice: Practice,
   results: Results,
@@ -81,6 +81,15 @@ const mySPA = (function(){
         div.append(btn);
       }
     },
+
+    this.switchForm = (elem) => {
+      if (elem.parentNode.classList.contains('is-active')) {return;}
+      else {
+        myModuleContainer.querySelectorAll('.form-wrapper').forEach(item => {
+          item.classList.toggle('is-active');
+        });
+      }
+    }
    
     this.setLanguage = (lang) => {
       language = lang;
@@ -106,8 +115,9 @@ const mySPA = (function(){
     },
 
     this.challengeOver = () => {
-      myModuleContainer.querySelector('.current-result').innerHTML = '<span style="color: red"> Challenge is over! Try agaib </span>';
+      myModuleContainer.querySelector('.current-result').innerHTML = '<span style="color: red"> Challenge is over! Try again </span>';
       myModuleContainer.querySelector('.gradient-button').classList.remove('disabled');      
+      myModuleContainer.querySelector('#stop_challenge').classList.add('disabled');
     }
 
     this.deleteOneLive = () => {
@@ -142,12 +152,17 @@ const mySPA = (function(){
           btn.classList.remove('right');
         }
       });     
-      myModuleContainer.querySelector('.gradient-button').classList.add('disabled');
+      myModuleContainer.querySelector('#start_challenge').classList.add('disabled');
+      myModuleContainer.querySelector('#stop_challenge').className = 'gradient-button stop-challenge';
+      myModuleContainer.querySelector('#next_level_challenge').classList.remove('unvisible');
+      myModuleContainer.querySelector('#caption_challenge').classList.add('unvisible');  //
+
       myModuleContainer.querySelector('#challenge_question').classList.remove('unvisible');
       myModuleContainer.querySelector('#challenge_lives').classList.remove('unvisible');
       myModuleContainer.querySelector('.lives').classList.remove('unvisible');
       myModuleContainer.querySelector('.current-result').classList.remove('unvisible');
       myModuleContainer.querySelector('#alphabet_challenge').classList.remove('unvisible');
+      
     }
 
     this.printMorseOrStr = (morseStr,field, str = '') =>{
@@ -751,6 +766,7 @@ const mySPA = (function(){
     this.hideWarning = () => myModuleView.hideWarning();
     this.showToTopBtn = () => myModuleView.showToTopBtn()
     this.toTop = () => myModuleView.toTop();
+    this.switchForm = (elem) => myModuleView.switchForm(elem);
 
     this.closeScoreModal = () => {
       myModuleView.closeScoreModal();
@@ -814,15 +830,12 @@ const mySPA = (function(){
       let q = challengeData.curQuestion;
       console.log(q);
       if (inner.toLowerCase() == challengeData.curQuestion.toLowerCase()) {
-        if (challengeData.hasOwnProperty(`${q}`)) {
-          // challengeData[`${q}`] = (challengeData[`${q}`] == 4) ? 'learned' : challengeData[`${q}`]++;
+        if (challengeData.hasOwnProperty(`${q}`)) {          
           challengeData[`${q}`]++;
-          if (challengeData[`${q}`] == 4) {
-            // challengeData[`${q}`] = 'learned'; 
-            if (!challengeData.learned.includes(q)) challengeData.learned.push(q);         
-            // challengeData.learned.push(q);
+          if (challengeData[`${q}`] == 4) { 
+            if (!challengeData.learned.includes(q)) challengeData.learned.push(q); 
             delete challengeData[`${q}`]; 
-            challengeData.level =challengeData.level.filter((item) => item !== q);
+            challengeData.level = challengeData.level.filter((item) => item !== q);
             console.log(challengeData.level);
           }          
         } else {
@@ -830,7 +843,6 @@ const mySPA = (function(){
         }        
         myModuleView.showCorrectOrFalse(true);
         myModuleView.makeBtnGreen(inner);
-        // console.log(challengeData[`${q}`]);
       } else {         
         if (challengeData.lives > 0) {
           challengeData.lives--;
@@ -858,6 +870,10 @@ const mySPA = (function(){
       }
       
     }; 
+    this.stopChallenge = () => {
+      myModuleView.challengeOver();
+      isChallengeStarted = false;
+    }
 
   }
   /* -------- end model -------- */
@@ -989,14 +1005,15 @@ const mySPA = (function(){
 
 
         /////*****   CHALLENGE PAGE LISTENERS *****/////
-        let isStarted = false;
+        // let isStarted = false;
         if (e.target.id === 'start_challenge') {
           e.preventDefault();
-          if (!isStarted) {
-            myModuleModel.startChallenge();
-            isStarted = true;
-          }
-          
+          myModuleModel.startChallenge();
+        }
+        //stop_challenge
+        if (e.target.id === 'stop_challenge') {
+          e.preventDefault();
+          myModuleModel.stopChallenge();
         }
 
         if (e.target.classList.contains('alpha-challenge') || e.target.classList.contains('alphabet-challenge-btn')) {
@@ -1015,6 +1032,14 @@ const mySPA = (function(){
 
         if (e.target.classList.contains("play-question")) {myModuleModel.playMorse();}
 
+
+        /////*****   REGISTRATION PAGE LISTENERS *****/////
+
+        if (e.target.classList.contains('switcher')){
+          e.preventDefault();
+          myModuleModel.switchForm(e.target);
+        }
+        
       })        
       
     },

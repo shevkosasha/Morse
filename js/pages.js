@@ -1,24 +1,10 @@
 const HomePage = {
   id: "main",
-  title: "Главная страница примера SPA",
+  title: "Main_About Morse Code",
   render: (className = "container", ...rest) => {
     return `
     
       <section class="${className}">
-        <h1>Главная</h1>
-        <p>Здесь будет контент <strong>Главной</strong> страницы.</p>
-      </section>
-    `;
-  }
-};
-
-const About = {
-  id: "about",
-  title: "About Morse Code",
-  render: (className = "container", ...rest) => {
-    return `
-    
-    <div class="content-container">
       <div class="site-title">
         <h1>About Morse Code</h1>
       </div>
@@ -27,6 +13,66 @@ const About = {
         <img src="https://placehold.it/700x250" alt="" class="" />
         <p>Morse code is a method of communication that uses short tones (dits) and long tones (dahs) in various sequences to make letters, numbers, and special characters. This tool will help beginners learn Morse code.</p>
       </div>
+      </section>
+    `;
+  }
+};
+
+const Registration = {
+  id: "registration",
+  title: "registration",
+  render: (className = "container", ...rest) => {
+    return `    
+    <div class="content-container">
+      <section class="forms-section">
+      <h1 class="section-title"></h1>
+      <div class="forms">
+        <div class="form-wrapper is-active">
+          <button type="button" class="switcher switcher-login">
+            Login
+            <span class="underline"></span>
+          </button>
+          <form class="form form-login">
+            <fieldset>
+              <legend>Please, enter your email and password for login.</legend>
+              <div class="input-block">
+                <label for="login-email">E-mail</label>
+                <input id="login-email" type="email" required>
+              </div>
+              <div class="input-block">
+                <label for="login-password">Password</label>
+                <input id="login-password" type="password" required>
+              </div>
+            </fieldset>
+            <button type="submit" class="btn-login">Login</button>
+          </form>
+        </div>
+        <div class="form-wrapper">
+          <button type="button" class="switcher switcher-signup">
+            Sign Up
+            <span class="underline"></span>
+          </button>
+          <form class="form form-signup">
+            <fieldset>
+              <legend>Please, enter your email, password and password confirmation for sign up.</legend>
+              <div class="input-block">
+                <label for="signup-email">E-mail</label>
+                <input id="signup-email" type="email" required>
+              </div>
+              <div class="input-block">
+                <label for="signup-password">Password</label>
+                <input id="signup-password" type="password" required>
+              </div>
+              <div class="input-block">
+                <label for="signup-password-confirm">Confirm password</label>
+                <input id="signup-password-confirm" type="password" required>
+              </div>
+            </fieldset>
+            <button type="submit" class="btn-signup">Continue</button>
+          </form>
+        </div>
+      </div>
+    </section>
     </div>
     `;
   }
@@ -266,12 +312,19 @@ const Challenge = {
             <div class="content-container">
               <section class="${className}">
                 <div class="btn-container">
-                  <a href="" class="gradient-button" id="start_challenge">Start challenge</a>                  
-                </div>
+                  <a href="" class="gradient-button start-challenge" id="start_challenge">Start challenge</a>  
+                  <a href="" class="gradient-button stop-challenge unvisible disabled" id="stop_challenge">Stop challenge</a> 
+                  <a href="" class="gradient-button next-level-challenge unvisible disabled" id="next_level_challenge">Next level</a>                 
+                </div>  
+                <h4 id="caption_challenge">
+                  In this game you should listen the code Morse. When a sound of a character is played, click on which character you think it is.
+                  To complete a level you need to give four correct answer for each character of the current level. If you give 5 wrong answers challenge is over.
+                </h4>              
+                
                 <div id="challenge">
                 
                   <div id="challenge_question" class="unvisible">
-                      <h2>Click to image to play the code we've quessed</h2>
+                      <h2>Click on the image below to repeat the code guessed</h2>
                       <div id="question" class="unvisible">question</div>
                       <div id="play_question"><img src="./img/noise.svg" alt="play" class = "img_play play-question"></div>
                   </div>
@@ -330,19 +383,7 @@ const Results = {
   }
 };
 
-const Contacts = {
-  id: "contacts",
-  title: "Ну и страница Контакты, как без нее?",
-  render: (className = "container", ...rest) => {
-    return `
-    
-      <section class="${className}">
-        <h1>Контакты</h1>
-        <p>Ну а тут классически будет страница <strong>Контакты</strong>.</p>
-      </section>
-    `;
-  }
-};
+
 
 const ErrorPage = {
   id: "error",

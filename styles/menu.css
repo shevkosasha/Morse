@@ -5,6 +5,9 @@ body {
 
   margin: 0;
 }
+nav {
+  box-shadow:#777;
+}
 
 h1{
   text-align: center;

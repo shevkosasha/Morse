@@ -12,7 +12,7 @@
     outline: none;
     margin-left: 20%;
     margin-right: 20%;
-    width: 50%;
+    width: 25%;
     display: inline-flex;
     color: deepskyblue;
     padding: 20px 30px;
@@ -92,9 +92,9 @@
   }
 
   #play_question img:hover{
-    -ms-transform: scale(1.25);
-    -webkit-transform: scale(1.25);
-    transform: scale(1.25);
+    -ms-transform: scale(1.15);
+    -webkit-transform: scale(1.15);
+    transform: scale(1.15);
   }
 
   #play_question img:active{

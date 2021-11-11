@@ -16,12 +16,12 @@ const NavBar = {
         <div id="mainmenu" class="slideout-sidebar ">
           <ul>
           <li><a class="mainmenu__link" href="#main">Главная</a></li>
-          <li><a class="mainmenu__link" href="#about">About Morse Code</a></li>
+          <!--<li><a class="mainmenu__link" href="#about">About Morse Code</a></li>-->
           <li><a class="mainmenu__link" href="#explore">Explore Morse Code</a></li>
           <li><a class="mainmenu__link" href="#practice">Practice Morse Code</a></li>
           <li><a class="mainmenu__link" href="#challenge">Challenge Morse Code</a></li>
           <li><a class="mainmenu__link" href="#results">Table of results</a></li>
-          <li><a class="mainmenu__link" href="#contacts">Контакты</a></li>
+          <li><a class="mainmenu__link" href="#registration">Registration</a></li>
           </ul>
         </div>
         </nav>
