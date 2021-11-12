@@ -23,7 +23,7 @@ const LoginForm = {
   title: "Main",
   render: (className = "container", ...rest) => {
     return `    
-    <div class="content-container">
+    <!--<div class="content-container">
       <section class="forms-section">
       <h1 class="section-title"></h1>
       <div class="forms">
@@ -73,7 +73,7 @@ const LoginForm = {
         </div>
       </div>
     </section>
-    </div>
+    </div>-->
     `;
   }
 };

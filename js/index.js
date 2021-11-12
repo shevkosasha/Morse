@@ -69,6 +69,12 @@ const mySPA = (function(){
       document.querySelector('.log-out').classList.replace('log-out','log-in');
     }
 
+    this.logIn = () => {
+      document.querySelector('.hi-section').textContent = 'Hi';
+      document.querySelector('.log-in').textContent = 'Log out';
+      document.querySelector('.log-out').classList.replace('log-in','log-out');
+    }
+
     this.disableBtns = () => {
       myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => { btn.classList.add('disabled')})
     }
@@ -995,6 +1001,12 @@ const mySPA = (function(){
       myModuleView.logOut();
     }
 
+    this.login = function() {     
+      console.log("Hello user");
+      myModuleView.logIn();
+    }
+
+
     this.getData = (snapshot) => {
       myDBRef.child("users").orderByChild("email").equalTo(`${user.email}`).once("value",snapshot => {
         if (snapshot.exists()){
@@ -1045,6 +1057,17 @@ const mySPA = (function(){
       // this.addMenuCloseHandler();
       update();
     },
+
+    this.loginHandler = (e) => {
+      if (e.target.classList.contains('log-out')) {
+        console.log('log out');
+        myModuleModel.logout();
+      }
+      if (e.target.classList.contains('log-in')) {
+        console.log('log in');
+        myModuleModel.login();
+      }
+    }
 
     this.addScrollHandler = (e) => {
       let toTopBtn = myModuleContainer.querySelector('.scrollup');
@@ -1207,6 +1230,11 @@ const mySPA = (function(){
           // e.preventDefault();
           // e.stopPropagation();
           console.log('log out');
+          myModuleModel.logout();
+        }
+
+        if (e.target.classList.contains('log-in')) {
+          console.log('log in');
           myModuleModel.logout();
         }
         

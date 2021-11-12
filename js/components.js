@@ -2,8 +2,30 @@ const Header = {
   render: (customClass = "") => {
     return `
     <div class="log-and-hi">
-      <button class="log-out" style="width:auto;">Log out</button>
-      <div class="hi-section">Hi man</div>
+      <button class="log-in" style="width:auto;">Log in</button>
+      <div class="hi-section">Hi user</div>
+    </div>  
+
+
+    <div class="login-page">      
+      <div id="login_forms" class="form ">
+        <div class="close-container">
+          <span  class="close-login" title="Close Modal">×</span>
+        </div>
+        <form class="register-form unvisible">
+          <input id="signup-name"type="text" placeholder="name"/>
+          <input id="signup-email" type="text" placeholder="email address"/>
+          <input id="signup-password" type="password" placeholder="password"/>          
+          <button class="btn-create-user">create</button>
+          <p class="message">Already registered? <a class="switcher" href="#">Sign In</a></p>
+        </form>
+        <form class="login-form visible">
+          <input id="login-email" type="text" placeholder="useremail"/>
+          <input id="login-password" type="password" placeholder="password"/>
+          <button class="btn-login-user">Login</button>
+          <p class="message">Not registered? <a class="switcher" href="#">Create an account</a></p>
+        </form>
+      </div>
     </div>  
     `;
   }
@@ -23,7 +45,7 @@ const NavBar = {
           <li><a class="mainmenu__link" href="#practice">Practice Morse Code</a></li>
           <li><a class="mainmenu__link" href="#challenge">Challenge Morse Code</a></li>
           <!--<li><a class="mainmenu__link" href="#results">Table of results</a></li>-->
-          <li><a class="mainmenu__link" href="#login">Login Form</a></li>
+          <!--<li><a class="mainmenu__link" href="#login">Login Form</a></li>-->
           </ul>
         </div>
         </nav>
