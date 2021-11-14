@@ -5,14 +5,17 @@ function ModuleView() {
   let contentContainer = null;
   let routesObj = null;
   let language = 'eng';
+  let currentUserName;
 
   this.init = function(container, routes) {
     myModuleContainer = container;
     routesObj = routes;
     menu = myModuleContainer.querySelector("#mainmenu");
     contentContainer = myModuleContainer.querySelector("#content");
-  }
+  },
 
+  this.setUserName = (name) => currentUserName = name;
+  
   this.renderContent = function(hashPageName) {
     let routeName = "default";
     if (hashPageName.length > 0) {
@@ -29,7 +32,10 @@ function ModuleView() {
 
     if (routeName === 'practice') {
      myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
-    }      
+     myModuleContainer.querySelector('#user_name').value = (currentUserName) ? currentUserName : '';
+    }   
+    
+    
     // this.showLoginForm();
     this.updateButtons(routesObj[routeName].id);
   },
@@ -57,7 +63,7 @@ function ModuleView() {
   this.logIn = () => {
     // document.querySelector('.hi-section').textContent = 'Hi';
     // document.querySelector('.log-in').textContent = 'Log out';
-    // document.querySelector('.log-out').classList.replace('log-in','log-out');
+    document.querySelector('.log-out').classList.replace('log-in','log-out');
   }
 
   this.disableBtns = () => {
@@ -69,7 +75,7 @@ function ModuleView() {
     let arr = (language == 'eng') ? morseCode : morseCodeRus;
     let div = (routeName === 'explore') ? myModuleContainer.querySelector('.alphabet') :
                                           myModuleContainer.querySelector('.alphabet_challenge');
-    // if (routeName === 'explore') 
+    if (routeName === 'explore') 
     div.innerHTML = '';
 
     for (let [symbol, code] of Object.entries(arr)){
@@ -197,39 +203,71 @@ function ModuleView() {
   }
 
   this.showQuestion = (question, options, index, score, userdata) => {
+   
     console.log(question);
     console.log(options);
-    // debugger;     
 
-    myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.questionPage;
-
-    if (userdata.context == 'audio') {
-      myModuleContainer.querySelectorAll('.img_play').forEach(elem =>{
-        (elem.classList.contains('answer')) ? elem.style.display = 'none' : elem.style.display = 'block';
-      });
-      myModuleContainer.querySelector('#display-question').style.display = 'none';
+    const fadeIn = () => {
+      el = myModuleContainer.querySelector('.game-quiz-container');
+      el.style.opacity = 0;
+      // el.style.display = 'flex';
+      (function fade() {
+          var val = parseFloat(el.style.opacity);
+          if (!((val += .1) > 1)) {
+              el.style.opacity = val;
+              requestAnimationFrame(fade);
+          }
+      })();
     }
+    
+    const fillQuestion = () => { 
+      myModuleContainer.querySelector('.game-quiz-container').innerHTML = (userdata.level !== 'hard') ? Practice.questionPage : Practice.questionPageHard;
 
-    myModuleContainer.querySelectorAll('.how-many-questions').forEach(elem => elem.innerHTML = userdata.countQuestions);
-    document.getElementById("question-number").innerHTML = index + 1;
-    document.getElementById("player-score").innerHTML = score;
-    document.getElementById("display-question").innerHTML = question.question.toUpperCase();
-    document.getElementById("option-one-label").innerHTML = options[0];
-    document.getElementById("option-two-label").innerHTML = options[1];
-    document.getElementById("option-three-label").innerHTML = options[2];
-    document.getElementById("option-four-label").innerHTML = options[3];  
+      if (userdata.context == 'audio') {
+        myModuleContainer.querySelectorAll('.img_play').forEach(elem =>{
+          (elem.classList.contains('answer')) ? elem.style.display = 'none' : elem.style.display = 'block';
+        });
+        myModuleContainer.querySelector('#display-question').style.display = 'none';
+      }
 
+      myModuleContainer.querySelectorAll('.how-many-questions').forEach(elem => elem.innerHTML = userdata.countQuestions);
+      myModuleContainer.querySelector("#question-number").innerHTML = index + 1;
+      myModuleContainer.querySelector("#player-score").innerHTML = score;
+      myModuleContainer.querySelector("#display-question").innerHTML = question.question.toUpperCase();
+      if (userdata.level !== 'hard'){
+        myModuleContainer.querySelector("#option-one-label").innerHTML = options[0];
+        myModuleContainer.querySelector("#option-two-label").innerHTML = options[1];
+        myModuleContainer.querySelector("#option-three-label").innerHTML = options[2];
+        myModuleContainer.querySelector("#option-four-label").innerHTML = options[3]; 
+      } else {
+        myModuleContainer.querySelector('.hard_quiz_caption').textContent = (userdata.context == 'audio') ? "Listen to the code Morse above and type text below"
+                                                                                                          : "Read the text above and type code below"
+      }
+    } 
+     
+    setTimeout(() => {
+      fillQuestion();      
+      fadeIn();
+    }, 500);
+     
   };
-
-  this.setLabelBackground = (inner = '',className = '') => {
+    
+  this.setBackground = (elemClass, inner = '',className = '') => {
     let optionLabels = myModuleContainer.querySelectorAll('.option');
-    if (inner && className) {
-      optionLabels.forEach(label => {
-        if (label.textContent == inner) label.parentNode.classList.add(className);
-      });
-    } else {        
-      optionLabels.forEach(label =>  label.parentNode.className = 'options');
-    }      
+    let tArea = myModuleContainer.querySelector('.answer-text-quiz');
+    if (inner && className && elemClass) {
+      console.log(elemClass);  
+      if (elemClass === 'text') {
+        console.log('text');
+        tArea.parentNode.classList.add(className);
+      }  
+      if (elemClass === 'option') {
+        optionLabels.forEach(label => {
+          if (label.textContent == inner) label.parentNode.classList.add(className);
+        });
+      }  
+    } 
+    
   };
 
   this.showCheckModal = () => {
@@ -238,52 +276,90 @@ function ModuleView() {
   }
   this.hideCheckModal = () => myModuleContainer.querySelector('#option-modal').style.display = "none";
 
-  this.removeQuiz = () => myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
+  this.removeQuiz = () => {
+    myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
+    myModuleContainer.querySelector('#user_name').value = (currentUserName) ? currentUserName : '';
+  };
 
-  this.showScoreModal = (result) => {      
-    myModuleContainer.querySelector('#remarks').innerHTML = result.remark;
-    myModuleContainer.querySelector('#remarks').style.color = result.remarkColor;
-    myModuleContainer.querySelector('#grade-percentage').innerHTML = result.grade;
-    myModuleContainer.querySelector('#wrong-answers').innerHTML = result.wrong;
-    myModuleContainer.querySelector('#right-answers').innerHTML = result.score;
+  this.showScoreModal = (result) => {     
+    console.log(result);
+    myModuleContainer.querySelector('.title-is-6').innerHTML = ` Your level: ${result.userdata.level} <br>
+                                                                 Quiz context: ${result.userdata.context} <br>
+                                                                 Quiz language: ${result.userdata.language} <br>
+                                                                 Count of questions: ${result.userdata.countQuestions} <br>
+                                                                 Correct answers: ${result.userdata.countQuestions} <br>`;
+    
+    
+    let resultContainer =  myModuleContainer.querySelector('.quiz-finish-list');
+
+    // for (let answer in result.answers) {
+    //   resultContainer.append(createRow());
+    // }
+    result.answers.forEach(answer => resultContainer.append(createRow(answer)));
+
     myModuleContainer.querySelector('#score-modal').style.display = 'block';
     myModuleContainer.querySelector('#score-modal').style.display = "flex";
+
+    function createRow(answer) {
+      let row = document.createElement('tr'),
+          td1 = document.createElement('td'),
+          td2 = document.createElement('td'),
+          td3 = document.createElement('td');
+          td4 = document.createElement('td');
+      console.log(answer);
+      
+      td1.innerHTML = `<strong>${answer.question}</strong>`;
+      td2.innerHTML = `${answer.cur}`;
+      td3.innerHTML = `${answer.ok}`;  
+      td4.innerHTML = (answer.result) ? `CORRECT` : 'BAD';      
+      
+      (answer.cur === answer.ok) ? row.classList.add('ok_answer') : row.classList.add('wrong_answer');
+      row.appendChild(td1);
+      row.appendChild(td2);
+      row.appendChild(td3);
+      row.appendChild(td4);
+
+      return row;
+  }
   }
 
-  this.closeScoreModal = () => {myModuleContainer.querySelector('#score-modal').style.display = 'none';}
+  this.closeScoreModal = () => {
+    myModuleContainer.querySelector('#score-modal').style.display = 'none';
+    myModuleContainer.querySelector('.game-quiz-container').style.opacity = 1;
+  }
   this.showWarning = () => myModuleContainer.querySelector('#username_input').querySelector('h2').classList.add('wrong-name');
+
+  // this.fadeIn = (el) => {
+  //   if (!el) el = myModuleContainer.querySelector('.game-quiz-container');
+  //     el.style.opacity = 0;
+  //     el.style.display = 'flex';
+  //     (function fade() {
+  //         var val = parseFloat(el.style.opacity);
+  //         if (!((val += .1) > 1)) {
+  //             el.style.opacity = val;
+  //             requestAnimationFrame(fade);
+  //         }
+  //     })();
+  // }
+
+  this.fadeOutQForm = (el) => {
+    if (!el) el = myModuleContainer.querySelector('.game-quiz-container');
+    el.style.opacity = 1;
+      (function fade() {
+          if ((el.style.opacity -= .1) < 0) {
+              // el.style.display = 'none';
+          } else {
+              requestAnimationFrame(fade);
+          }
+      })();
+  };
 
 
   this.printUser = function(userList) {
-    let userListContainer = document.getElementById('users-list__container');
-
-    if (!userListContainer) {
-        document.getElementById('users').innerHTML += `
-        <div class="columns">
-            <div class="column">
-                <div class="users-list">
-                    <h4 class="title is-4">Список пользователей:</h4>
-                    <table id="users-list" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                        <thead>
-                            <tr>
-                                <th>Пользователь</th>
-                                <th>email</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-list__container"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        `;
-        userListContainer = document.getElementById('users-list__container');
-    } else {
-        userListContainer.innerHTML = '';
-    }
-
+    let userListContainer = document.querySelector('.users-list');
+    userListContainer.innerHTML = '';
     for (let user in userList) {
-        userListContainer.appendChild(createRow(user, userList));
+      userListContainer.appendChild(createRow(user, userList));
     }
     
 
@@ -292,22 +368,92 @@ function ModuleView() {
             td1 = document.createElement('td'),
             td2 = document.createElement('td'),
             td3 = document.createElement('td');
-            td4 = document.createElement('td');
-            td5 = document.createElement('td');
+            
         row.setAttribute('data-id', user);
-        td1.innerHTML = `<strong>${userList[user].name}</strong>`;
-        td2.innerHTML = `${userList[user].context}`;
-        td3.innerHTML = `${userList[user].level}`;
-        td4.innerHTML = `${userList[user].language}`;
-        td5.innerHTML = `<a href="#" class="delete is-medium" title="удалить пользователя">Удалить</a>`;
+        td1.innerHTML = `<strong>${userList[user].username}</strong>`;
+        td2.innerHTML = `${userList[user].email}`;
+        // td3.innerHTML = `${userList[user].level}`;
+        // td4.innerHTML = `${userList[user].language}`;
+        td3.innerHTML = `<a href="#" class="delete-user-btn" title="удалить пользователя"> Delete user </a>`;
+        row.appendChild(td1);
+        row.appendChild(td2);
+        row.appendChild(td3);
+        // row.appendChild(td4);
+        // row.appendChild(td5);
+
+        return row;
+    }
+  }
+
+  this.showAddUserForm = (elem) => {
+    let inner =  ' <a href="#" class="add-user-btn-form" title="Add user"> Add user </a>'
+                  +' <input id="add_user-name"type="text" placeholder="name"/>'
+                  + '<input id="add_user-email" type="text" placeholder="email address"/>';
+    myModuleContainer.querySelector('.add-user').innerHTML = inner;
+  }
+
+  this.hideAddUserForm = (elem) => {
+    let inner =  ' <a href="#" "class="add-user-btn" title="Add user"> Add user </a>';
+    myModuleContainer.querySelector('.add-user').innerHTML = inner;
+  }
+
+  this.printQuizUsers = (userList) => {
+    let userListContainer = document.querySelector('.quiz-list');
+    userListContainer.innerHTML = '';
+    for (let user in userList) {
+      userListContainer.appendChild(createRow(user, userList));
+    }
+    
+
+    function createRow(user, userList) {
+        let row = document.createElement('tr'),
+            td1 = document.createElement('td'),
+            td2 = document.createElement('td'),
+            td3 = document.createElement('td');
+            
+        row.setAttribute('data-id', user);
+        td1.innerHTML = `<strong>${userList[user].username}</strong>`;
+        td2.innerHTML = `${userList[user].score}`;
+        td3.innerHTML = `<a href="#" class="delete-quiz-user-btn" title="delete user quiz info"> Delete info </a>`;
+        row.appendChild(td1);
+        row.appendChild(td2);
+        row.appendChild(td3);
+
+        return row;
+    }
+  },
+
+  this.printChallengeUsers = (userList) => {
+    let userListContainer = document.querySelector('.challenge-list');
+    userListContainer.innerHTML = '';
+    for (let user in userList) {
+      userListContainer.appendChild(createRow(user, userList));
+    }
+
+    console.log(userList);
+    
+
+    function createRow(user, userList) {
+        let row = document.createElement('tr'),
+            td1 = document.createElement('td'),
+            td2 = document.createElement('td'),
+            td3 = document.createElement('td');
+            td4 = document.createElement('td');
+            
+        row.setAttribute('data-id', user);
+        td1.innerHTML = `<strong>${userList[user].username}</strong>`;
+        td2.innerHTML = `${userList[user].score}`;
+        td3.innerHTML = `${userList[user].data.levelsComplited.lastComplited}`;
+        td4.innerHTML = `<a href="#" class="delete-challenge-user-btn" title="delete user challenge info"> Delete info </a>`;
         row.appendChild(td1);
         row.appendChild(td2);
         row.appendChild(td3);
         row.appendChild(td4);
-        row.appendChild(td5);
 
         return row;
     }
-}
+  }
+
+  this.hideWarningInfo = () => myModuleContainer.querySelector('.warning-info').classList.add('unvisible');
 
 };

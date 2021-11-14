@@ -115,7 +115,21 @@ span img:hover{
   color: white;
 }
 
-/*input[type="checkbox"],*/ input[type="radio"] {
+#answer_quiz{
+  width: 100%;
+  justify-content: center;
+  /* margin-left: 10px; */
+}
+#answer_quiz textarea{
+  position: relative;
+  margin-left: 10px;
+  width: 95%; 
+}
+#answer_quiz .hard_quiz_caption{
+  text-align: center;
+}
+
+input[type="radio"] {
   position: relative;
   display: none;
 }
@@ -128,12 +142,7 @@ span img:hover{
 .selected {
   background: paleturquoise;
 }
-.wrong {
-  background-color:crimson;
-}
-.ok {
-  background-color:darkgreen;
-}
+
 
 .next-button-container{
   width: 50%;
@@ -161,12 +170,11 @@ span img:hover{
   position: absolute;
   z-index: 1; 
   left: 0;
-  top: 0;
+  top: 30px;
   width: 100%; 
-  height: 100%; 
+  height: 95%; 
   overflow: auto; 
-  background-color: rgb(0,0,0); 
-  background-color: rgba(0,0,0,0.4); 
+  /* background-color: gray;  */
   flex-direction: column;
   align-items: center;
   justify-content: center; 
@@ -175,26 +183,25 @@ span img:hover{
 }
 
 .modal-content-container{
-  height: 30rem;
-  width: 25rem;
-  background-color: rgb(43, 42, 42);
+  height: 40rem;
+  width: 90%;
+  background-color: rgb(209, 205, 205);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  /* justify-content: space-around; */
   border-radius: 25px;
 }
 
 .modal-content-container h1{
   font-size: 1.3rem;
   height: 3rem;
-  color: lightgray;
+  color: rgb(231, 110, 110);
   text-align: center;
 }
 
 .grade-details{
-  width: 15rem;
-  height: 10rem;
+  
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -364,5 +371,21 @@ span img:hover{
   to {opacity: 1;}
 }
 
+.wrong {
+  background-color:crimson;
+}
+.ok {
+  background-color:darkgreen;
+}
 
+.wrong_answer {
+  color:crimson;
+}
+.ok_answer {
+  color:darkgreen;
+}
+
+.quiz_result-finish-list{
+  margin-top: 20px;
+}
 

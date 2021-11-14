@@ -5,10 +5,57 @@
   font-family: "Exo 2", sans-serif;
   background-color:#e3e1eb;
 } */
+
+#users-list__container{
+  width:70%;
+}
+#quiz-results_container,
+#challenge-results_container {
+  width:70%;
+}
+
+.table {
+	width: 100%;
+	border: none;
+	margin-bottom: 20px;
+  border: 2px solid gray;
+}
+.table thead th {
+	font-weight: bold;
+	text-align: left;
+	border: none;
+	padding: 10px 15px;
+	background: #d8d8d8;
+	font-size: 14px;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+  width: max-content;
+  height: max-content;
+}
+.table tbody td {
+	text-align: left;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	padding: 10px 15px;
+	font-size: 14px;
+	vertical-align: top;
+  width: max-content;
+  height: max-content;
+}
+.table thead tr th:first-child, .table tbody tr td:first-child {
+	border-left: none;
+}
+.table thead tr th:last-child, .table tbody tr td:last-child {
+	border-right: none;
+}
+.table tbody tr:nth-child(even){
+	background: #f3f3f3;
+}
+
 div.scrollup {
   position: fixed; /* фиксированная позиция */
   color: #fff; /* цвет текста */
-  background-color: #1e90ff; /* цвет заднего фона */
+  background-color: #060a0e; /* цвет заднего фона */
   right: 20px; /* расстояние от правого края */
   bottom: 0px; /* расстояние от нижнего края */
   padding: 4px 10px; /* отступы до содержимого блока */

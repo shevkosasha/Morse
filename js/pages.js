@@ -146,7 +146,7 @@ const Practice = {
                 <label for="user_name"><!--<p class='wrong-name'>type your name</p>--></label>                
               </div>
 
-              <h2>Choose alphabet</h2>
+              <h2>Choose language</h2>
               <div class="form_toggle quiz_language">
                 <div class="form_toggle-item language latin">
                   <input id="fid-latin" type="radio" name="language" value="eng" checked>
@@ -190,6 +190,42 @@ const Practice = {
                   <button class='start-quiz-button'">Start quiz</button>
               </div>
   `,
+  questionPageHard:`  
+  <div class="game-details-container">
+    <h1>Score : <span id="player-score"></span> / <span class="how-many-questions"></span></h1>
+    <h1> Question : <span id="question-number"></span> / <span class="how-many-questions"></span></h1>
+    <!--<h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h2>-->
+    <h2 class="close-btn">&nbsp;&times;&nbsp;</h2> 
+  </div>
+  <h4>Pick a right option for</h4>
+  <div class="game-question-container">
+    <img src="./img/noise.svg" alt="play" class = "img_play question" style ="display: none;">
+    
+    <div><h1 id="display-question"> </h1></div>
+  </div>
+
+  <div class="game-options-container">
+  <div class="modal-container" id="option-modal">
+    <div class="modal-content-container">
+      <h1>Please Pick An Option</h1>
+      <div class="modal-button-container">
+          <button class="close-checkModal-button">Continue</button>
+      </div>
+    </div>
+  </div>
+
+                    <div id="answer_quiz"  class="answer-quiz">
+                      <h3 class="hard_quiz_caption"></h3>
+                      <textarea rows="4" cols="50" name="text" class="answer-text-quiz"></textarea>
+                    </div>  
+  </div>
+
+  <div class="next-button-container">
+    <!--<button class='check-button'">Check Answer</button>-->
+    <span>&nbsp;&nbsp;&nbsp;</spam>
+    <button class='next-button'">Next Question</button>
+  </div>
+`,
   questionPage:`  
               <div class="game-details-container">
                 <h1>Score : <span id="player-score"></span> / <span class="how-many-questions"></span></h1>
@@ -270,16 +306,42 @@ const Practice = {
                       <h1>Congratulations, Quiz Completed.</h1>
 
                       <div class="grade-details">
-                          <p>Attempts : 10</p>
+                          <!--<p>Attempts : 10</p>
                           <p>Wrong Answers : <span id="wrong-answers"></span></p>
                           <p>Right Answers : <span id="right-answers"></span></p>
                           <p>Grade : <span id="grade-percentage"></span>%</p>
-                          <p ><span id="remarks"></span></p>
+                          <p ><span id="remarks"></span></p>-->
+
+                          <div id="quiz-result_finish">
+                            <div class="columns">
+                              <div class="column">
+                                <div class="quiz_result-finish-list">
+                                  <h4 class="title-is-4">Your result :</h4>
+                                  <h5 class="title-is-6"></h5>
+                                  <table class="table">
+                                    <thead>
+                                      <tr>
+                                        <th>Question</th>
+                                        <th>Your answer</th>
+                                        <th>Correct answer</th> 
+                                        <th>Result</th>  
+                                      </tr>
+                                    </thead>
+                                    <tbody class="quiz-finish-list">
+                                              
+                                    </tbody>
+                                  </table>
+                                  <div class="modal-button-container">
+                                      <button class="closeScoreModal">Finish Quiz</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
                       </div>
 
-                      <div class="modal-button-container">
-                          <button class="closeScoreModal">Finish Quiz</button>
-                      </div>
+                    
 
                   </div>
               </div>
@@ -358,37 +420,103 @@ const Challenge = {
   }
 };
 
-const Results = {
-  id: "results",
-  title: "Table of results",
+const Info = {
+  id: "info",
+  title: "App Info",
+  addUserForm: "",
   render: (className = "container", ...rest) => {
     return `
     
       <section class="${className}">
-        <h1>Results</h1>
+        <h1>Information</h1>
+        <h2 class="warning-info" style="color:red">Please log in to see info on this page</h2>
         <div id="users-list__container">
           <div class="columns">
             <div class="column">
-                <div class="users-list">
+                <div id="users_list">
                     <h4 class="title is-4">Список пользователей:</h4>
-                    <table id="users-list" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                        <thead>
-                            <tr>
-                                <th>Пользователь</th>
-                                <th>email</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-list__container"></tbody>
-                    </table>
+                    <table class="table">
+                    <thead>
+                      <tr>
+                        <th>User Name</th>
+                        <th>E-mail</th>
+                        <th> </th>                        
+                      </tr>
+                    </thead>
+                    <tbody class="users-list">
+                       
+                    </tbody>
+                  </table>
+                  <!--<a href='#' class="add-user-btn" title="Add user"> Add user </a>-->
+                  <div id="add_user" class="add-user">
+                    <a href='#' class="add-user-btn" title="Add user"> Add user </a>                   
+                  </div>
                 </div>
             </div>
         </div>
       </div>
+
+
+      <div id="quiz-results_container">
+        <div class="columns">
+          <div class="column">
+            <div class="quiz_result-list">
+              <h4 class="title is-4">Quiz best results:</h4>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>User Name</th>
+                    <th>Score</th> 
+                    <th> </th>                 
+                  </tr>
+                </thead>
+                <tbody class="quiz-list">
+
+                </tbody>
+              </table>
+              <a href='#' class="delete-quiz-info-btn" title="Add user"> Delete Quiz Info </a>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div id="challenge-results_container">
+    <div class="columns">
+      <div class="column">
+        <div class="challenge_result-list">
+          <h4 class="title is-4">Challenge best results:</h4>
+          <table class="table">
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>Scores</th>
+              <th>Levels</th>
+              <th> </th>               
+            </tr>
+          </thead>
+          <tbody class="challenge-list">
+            <tr>
+              <td>Gloria</td>
+              <td>Reeves@mail.com</td>
+              <td>67439</td>                        
+            </tr>
+            <tr>
+              <td>Graham</td>
+              <td>Bonner</td>
+              <td>Х</td>                       
+            </tr>                  
+          </tbody>
+            </table>
+          </div>
+      </div>
+  </div>
+</div>
+
       </section>
       
     `;
   }
+
 };
 
 

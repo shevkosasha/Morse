@@ -12,7 +12,7 @@ const routes = {
   login: LoginForm,
   explore: Explore,
   practice: Practice,
-  results: Results,
+  info: Info,
   challenge: Challenge,
   default: HomePage,
   error: ErrorPage,

@@ -1,6 +1,7 @@
 function ModuleController (){
   let myModuleContainer = null;
   let myModuleModel = null;
+  let isQuizHandlerAdded = false;
 
   this.init = function(container, model) {
     myModuleContainer = container;
@@ -10,32 +11,50 @@ function ModuleController (){
       // debugger;
       if (myModuleContainer.querySelector('main')) {          
         myModuleContainer.querySelector('main').removeEventListener('click',this.quizHandler);
+        isQuizHandlerAdded = false;
         myModuleModel.stopQuiz();
       }
       const hashPageName = location.hash.slice(1).toLowerCase();
       this.updateState(hashPageName); //первая отрисовка
-      // this.addListeners(hashPageName);
     }
 
     window.addEventListener("hashchange", update);
     this.addListeners();
-    // this.addMenuCloseHandler();
     update();
   },
 
   
   this.updateState = function(page) {        
-    myModuleModel.updateState(page);        
+    myModuleModel.updateState(page);
   },   
 
   this.addListeners = function(){
-    // console.log(page); 
 
     // if (page === 'results') myModuleModel.printUsersList(); 
 
     let toTopBtn = myModuleContainer.querySelector('.scrollup');
     window.addEventListener('scroll', (e) => myModuleModel.showToTopBtn()) ;    
     toTopBtn.addEventListener('click', () => myModuleModel.toTop());
+
+    window.addEventListener('mousedown',(e) => {
+      if (e.target.id === 'morse_button'){
+        myModuleModel.handleMorseTapStart();
+      }
+    });
+
+    // window.addEventListener('mouseout',(e) => {
+    //   if (e.target.id === 'morse_button'){
+    //     myModuleModel.handleMorseTapEnd();
+    //   }
+    // });
+    
+    window.addEventListener('mouseup',(e) => {
+      if (e.target.id === 'morse_button'){
+        myModuleModel.handleMorseTapEnd();
+      }
+    });
+    
+    
 
 
     
@@ -86,8 +105,11 @@ function ModuleController (){
       
       if (e.target.classList.contains('decode-morse')){          
         const inputHandler = (e) => {
-          let value =  myModuleContainer.querySelector('.decode-morse').value;
-          myModuleModel.decodeMorse(value, myModuleContainer.querySelector('#code_word'));
+          let value =  myModuleContainer.querySelector('.decode-morse').value.match(/\.|\s|-/g); 
+          if (value) {
+            value = value.join('');
+            myModuleModel.decodeMorse(value, myModuleContainer.querySelector('#code_word'));
+          }              
         }
         myModuleContainer.querySelector('.decode-morse').addEventListener('input', inputHandler);
         myModuleContainer.querySelector('.decode-morse').addEventListener('blur', (e) => {
@@ -95,13 +117,15 @@ function ModuleController (){
         });
       }
 
-      if (e.target.classList.contains('transfer_checkbox') ) {          
+      if (e.target.classList.contains('transfer_checkbox')) {          
         myModuleModel.switchTransfer(e.target.checked);
       }
 
-      if (e.target.classList.contains('play_checkbox') ) {          
+      if (e.target.classList.contains('play_checkbox')) {          
         myModuleModel.switchAudio(e.target.checked);
       }
+
+     
 
 
       // myModuleContainer.querySelector('#morse_button').addEventListener('mousedown', myModuleModel.handleMorseTapStart);
@@ -130,7 +154,7 @@ function ModuleController (){
           myModuleModel.showWarning();
         } else {
           myModuleModel.createQuiz(userdata);
-          myModuleContainer.querySelector('main').addEventListener('click',this.quizHandler);
+          if (!isQuizHandlerAdded) { myModuleContainer.querySelector('main').addEventListener('click',this.quizHandler); }
         }
 
       }
@@ -214,27 +238,65 @@ function ModuleController (){
         console.log('log out');
         myModuleModel.logout();
       }
-      
-    })        
+
+       /////*****   INFO PAGE LISTENERS *****/////
+      if (e.target.classList.contains('delete-user-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
+        myModuleModel.deleteUser(e.target.parentElement.parentElement.dataset.id);
+      }
+
+      if (e.target.classList.contains('add-user-btn')) {
+        e.preventDefault();
+        e.stopPropagation();        
+        // console.log(e.target);
+        myModuleModel.showAddUserForm(e.target);
+        // let name = e.target.parentElement.querySelector('#add_user-name').value;
+        // let email = e.target.parentElement.querySelector('#add_user-email').value;
+        // myModuleModel.addUser(name,email);
+      }
+      // add-user-btn-form
+      if (e.target.classList.contains('add-user-btn-form')) {
+        e.preventDefault();
+        e.stopPropagation();   
+        console.log(e.target);
+        let name = e.target.parentElement.querySelector('#add_user-name').value;
+        let email = e.target.parentElement.querySelector('#add_user-email').value;
+        myModuleModel.addUser(name,email);    
+        myModuleModel.hideAddUserForm(e.target);        
+      }      
+    });       
     
   },
 
   this.quizHandler = (e) => {
+    isQuizHandlerAdded = true;
     e.preventDefault();
     e.stopPropagation();
+
     let parentDiv = myModuleContainer.querySelector('.game-options-container'); 
     let selectedOption = parentDiv.querySelector('.selected');
+    let textOption = parentDiv.querySelector('.answer-text-quiz');
+    // let currentAnswer = (selectedOption) ? selectedOption.querySelector('label').textContent : textOption.value;
     
     if (e.target.className === 'next-button'){
-      if (selectedOption){
-        let currentAnswer = selectedOption.querySelector('label').textContent;
-        myModuleModel.checkAnswer(currentAnswer);
-        // debugger;
+      if (selectedOption || textOption){ 
+        let elem = (selectedOption) ? 'option' : 'text';  
+        let currentAnswer = (selectedOption) ? selectedOption.querySelector('label').textContent : textOption.value;
+        if (currentAnswer) {
+          myModuleModel.checkAnswer(currentAnswer,elem);
+        }  else {
+          console.log('nothing typed'); // для сложного уровня: если ничего не напечатано, то показываем модалку
+          myModuleModel.showCheckModal();
+        }
       } else {
-        console.log('nothing selected');
+        console.log('nothing selected'); // если ничего не выбрано, показываем модалку
         myModuleModel.showCheckModal();
       }
+     
     }
+
+    
 
     if (e.target.className == 'option' && e.target.tagName == 'LABEL') {
       if (selectedOption) { 
@@ -255,6 +317,7 @@ function ModuleController (){
 
     if (e.target.className === 'close-btn' || e.target.className === 'closeScoreModal'){
       myModuleContainer.querySelector('main').removeEventListener('click',this.quizHandler);
+      isQuizHandlerAdded = false;
       myModuleModel.stopQuiz();
       if (e.target.className == 'closeScoreModal') {
         myModuleModel.closeScoreModal();

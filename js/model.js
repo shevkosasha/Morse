@@ -26,9 +26,9 @@
 
     //объект настроек для передачика Морзе
     let morse = {
-        ditMaxTime: (1200 / 15 * 0.3),
-        letterGapMinTime: (this.ditMaxTime*3),
-        wordGapMaxTime: (this.ditMaxTime*7),
+        ditMaxTime: 0,
+        letterGapMinTime: 0,
+        wordGapMaxTime:0,
         morseHistorySize: 50,
         charT: 0,
         gapT: 0,
@@ -37,34 +37,46 @@
         buffer: '',
         isRunning: false,
     };
+    morse.ditMaxTime = 1200 / 15 * 0.5; //  1.2 / 15, 1200 / 15 * 0.3
+    morse.letterGapMinTime = morse.ditMaxTime*3;
+    morse.wordGapMaxTime = morse.ditMaxTime*7;
 
     let isChallengeStarted = false;
     let challengeData = {
-      levelsComplited: [],
+      levelsComplited: {
+        lastComplited: -1,
+        levels: [],
+      },
       learned:[],
       points: 0,
+      challengeLevel: 0
     };
-    let challengeLevel = 0;   
+    let challengeIndex = 0;   
 
     const that = this;
 
     this.init = function(view) {
-      myModuleView = view;
+      myModuleView = view;        
       console.log(firebase.auth().currentUser);
       // console.log(loggedUser);
-      if (!this.getUserFromLocalStorage()) {
-        myModuleView.showLoginForm();        
-      } else {
-        loggedUser = this.getUserFromLocalStorage();
-        this.login(loggedUser.email, loggedUser.pass);
-      }
-        
-      
+        if (!this.getUserFromLocalStorage()) {
+          myModuleView.showLoginForm();        
+        } else {
+          loggedUser = this.getUserFromLocalStorage();
+          myModuleView.setUserName(loggedUser.name);
+          this.login(loggedUser.email, loggedUser.pass);
+        }
     },
 
-    this.updateState = function(pageName) {
-        myModuleView.renderContent(pageName);
-    },
+    this.updateState = (pageName) => {
+      myModuleView.renderContent(pageName); 
+      if (pageName === 'info' && loggedUser.name) {
+        myModuleView.hideWarningInfo();
+        this.getUsersList();
+        this.getQuizInfo();  
+        this.getChallengeInfo();    
+      }
+    }
    
     
     ///** firebase & local storage functions **////
@@ -82,17 +94,14 @@
         if (typeof localStorage !== "undefined") {
 
           console.log(loggedUser.name);
-          // debugger;
           localStorage.removeItem(`User_${loggedUser.name}`);
           localStorage.removeItem("Morse_current_user");
-            // myModalView.clearViewData();
-            // myModalView.printInfo("Data removed...");
         } else {
             console.log("localStorage is not defined and you can try to use cookies");
         }
     },
 
-    this.login = function(userEmail, userPass) {
+    this.login = function(userEmail, userPass, pageName) {
       
         if (userEmail && userPass) {
           firebase.auth().signInWithEmailAndPassword(userEmail, userPass)
@@ -113,66 +122,29 @@
                   userData = snapshot.val();
                   userDataName = Object.keys(userData);
                   username = userData[userDataName].username;
-                  // myModuleView.sayHi(username);
-                  const currentUser = {};
+
+                  const currentUser = {}; // создаем объект для авторизованного пользователя
                   currentUser.name = username;
                   currentUser.email = userEmail;
                   currentUser.pass = userPass;
                   // console.log (JSON.stringify(currentUser));
                   localStorage.setItem(`User_${username}`,JSON.stringify(userData));
-                  localStorage.setItem('Morse_current_user',JSON.stringify(currentUser));
+                  localStorage.setItem('Morse_current_user',JSON.stringify(currentUser)); // сохраняем авторизованного пользователя в localStorage
                   loggedUser = that.getUserFromLocalStorage();
-  
-                  myModuleView.closeLoginForm();
-                  myModuleView.sayHi(username);
                   }
-              }).then(() => {
-                
-                // const currentUser = {};
-                // currentUser.name = username;
-                // currentUser.email = userEmail;
-                // currentUser.pass = userPass;
-                // // console.log (JSON.stringify(currentUser));
-                // localStorage.setItem(`User_${username}`,JSON.stringify(userData));
-                // localStorage.setItem('Morse_current_user',JSON.stringify(currentUser));
-  
-                // myModuleView.closeLoginForm();
-                // myModuleView.sayHi(username);
+              }).then(() => {     
+                myModuleView.closeLoginForm();
+                myModuleView.sayHi(username);
               }).catch(function (error) {
                   console.log("Error: " + error.code);
-              });;
+              });              
               
-              
-              // myDBRef.once("value", (snapshot) => {
-              //   let a = snapshot.exists();
-              //   console.log(a);
-              //   // a === true
-              //   let b = snapshot.child("users").exists(); 
-              //   console.log(b);
-              //   // b === true
-              //   let c = snapshot.child("users/user_abc").exists();
-              //   console.log(c);
-              //   // c === true
-              //   let d = snapshot.child("users/user_abc/email").exists();
-              //   console.log(d);
-              //   let e = snapshot.child("users/user_abc/email").val();
-              //   console.log(e);
-              //   // d === false (because there is no "rooms/room0" child in the data snapshot)
-              // }); 
-  
-             
-              
-              // console.log(myDBRef);
-              // myDBRef
-              // var a = snapshot.exists();
-              // User is signed in.
-              myModuleView.renderContent('explore');
+            
               // that.getUsersList();
               // that.printUsersList();
             } else {
               // No user is signed in.
-              // myAppView.hideForm();
-              console.log('no user signed in')
+              console.log('no user signed in');
             }
           });
         } else {
@@ -180,7 +152,6 @@
         }
     },
 
-    // const that = this;
     
 
     
@@ -217,20 +188,7 @@
         });
         
       that.login(email,pass);
-      // myDB.ref('users/' + `user_${userName.replace(/\s/g, "").toLowerCase()}`).set({
-      //   username: `${userName}`,
-      //   email: `${userEmail}`,
-      //   password: `${password}`,
-      //   // score: 0,
-      //   // level: 1,
-      // })
-      // .then(function (userName) {
-      //   console.log(`Пользователь ${userName} добавлен в коллецию users`);
-      // })
-      // .catch(function (error) {
-      //   console.error("Ошибка добавления пользователя: ", error);
-      // });
-      // this.login(userEmail,userPass);
+      
     },
 
     this.addUser = function(username, useremail) {
@@ -245,19 +203,19 @@
           console.error("Ошибка добавления пользователя: ", error);
       });
 
-      // this.updateUsersList();
-  }
+      this.printUsersList();
+    },
 
 
         
-    this.getData = (snapshot) => {
+    this.getUserFromDataBase = (snapshot) => {
         myDBRef.child("users").orderByChild("email").equalTo(`${user.email}`).once("value",snapshot => {
             if (snapshot.exists()){
             const userData = snapshot.val();
             var userDataName = Object.keys(userData);
             var username = userData[userDataName].username;
             console.log(username);
-            debugger;
+            // debugger;
             this.view.sayHi(username);
             }
         });
@@ -268,7 +226,7 @@
         .then(function(snapshot) {
             console.log("Users list:");
             console.log(snapshot.val());
-            // myModuleView.printUser(snapshot.val());
+            myModuleView.printUser(snapshot.val());
         }).catch(function (error) {
             console.log("Error: " + error.code);
         });
@@ -280,7 +238,40 @@
         }, function (error) {
             console.log("Error: " + error.code);
         });
-    }
+    },
+
+    this.deleteUser = (userid) => {
+      myDB.ref('users/' + userid).remove()
+      .then(function () {
+          console.log("Пользователь удален из коллеции users");
+      })
+      .catch(function (error) {
+          console.error("Ошибка удаления пользователя: ", error);
+      });
+      this.printUsersList();
+    },
+
+    this.getQuizInfo = () => {
+      myDB.ref("quiz/").once("value")
+      .then(function(snapshot) {
+          console.log("Quiz list:");
+          console.log(snapshot.val());
+          myModuleView.printQuizUsers(snapshot.val());
+      }).catch(function (error) {
+          console.log("Error: " + error.code);
+      });
+    };
+
+    this.getChallengeInfo = () => {
+      myDB.ref("challenge/").once("value")
+      .then(function(snapshot) {
+          console.log("Challenge list:");
+          console.log(snapshot.val());
+          myModuleView.printChallengeUsers(snapshot.val());
+      }).catch(function (error) {
+          console.log("Error: " + error.code);
+      });
+    };
   
     this.showLoginForm = () => myModuleView.showLoginForm();
     this.closeLoginForm = () => myModuleView.closeLoginForm();
@@ -308,6 +299,7 @@
     },
     
     this.decodeMorse = function(str,elem){
+        if (morse.buffer) morse.buffer = str;
         let phrase = this.morseToStr(str);
         myModuleView.printMorseOrStr(phrase,elem);
     }
@@ -325,20 +317,6 @@
         }
     };
 
-
-    // this.createAudioCtx = () => {
-    //   var AudioContext = window.AudioContext || window.webkitAudioContext;
-    //   audioData.ctx = new AudioContext();
-    //   audioData.dot = 1.2 / 15;
-
-    //   var t = ctx.currentTime;
-
-    //   var oscillator = ctx.createOscillator();
-    //   oscillator.type = "sine";
-    //   oscillator.frequency.value = 600;
-
-    //   var gainNode = ctx.createGain();
-    // }
 
 
     // Morse functions: play, code to Morse, decode from Morse
@@ -358,24 +336,24 @@
         return res;
     }
 
-    this.morseToStr = (str, lang = '') => {
-        let arr =[];
-        if (lang) {
-            arr = (lang == 'eng') ? morseCode : morseCodeRus;
-        } else {
-            arr = (curExpLanguage == 'eng') ? morseCode : morseCodeRus;
-        }
-        let words = [];
-        let i = 0;
-        str.split('   ').forEach(word => {
-            words[i] = word.split(' ').map(letter => {
-            for (let [key, code] of Object.entries(arr)){
-                if (letter === code) return key;
-            }
-            });
-            i++;
-        });
-        return words.map(word => word.join('')).join(' ');
+    this.morseToStr = (str, lang = '') => {      
+      let arr =[];
+      if (lang) {
+          arr = (lang == 'eng') ? morseCode : morseCodeRus;
+      } else {
+          arr = (curExpLanguage == 'eng') ? morseCode : morseCodeRus;
+      }
+      let words = [];
+      let i = 0;
+      str.split('   ').forEach(word => {
+          words[i] = word.split(' ').map(letter => {
+          for (let [key, code] of Object.entries(arr)){
+              if (letter === code) return key;
+          }
+          });
+          i++;
+      });
+      return words.map(word => word.join('')).join(' ');
     }
 
     this.playMorse = function(str,on){
@@ -435,9 +413,9 @@
     }
 
     this.stopCharTimer = () => {
-      clearInterval(morse.charTimer);
-      morse.charTimer = 0;
-      morse.charTime = 0;
+      // clearInterval(morse.charTimer);
+      // morse.charTimer = 0;
+      // morse.charT = 0;
     }
 
     this.startGapTimer = () => {
@@ -449,6 +427,7 @@
             if (morse.gapT >= morse.wordGapMaxTime) {
                 morse.buffer += '   ';
                 clearInterval(morse.gapTimer);
+                console.log(morse.buffer);
                 morse.gapTimer = 0;
                 morse.gapT = 0;
             }
@@ -463,25 +442,24 @@
 
     this.handleMorseTapEnd = (e) => {
       if (morse.isRunning) {
-        if ((e.target.id !== "morse_button") || (e.repeat)) {return}
+        // if ((e.target.id !== "morse_button") || (e.repeat)) {return}
 
         morse.isRunning = false;
-        
-        if (morse.charT <= morse.ditMaxTime) {
+        console.log(morse.charT, morse.ditMaxTime);
+        if (morse.charT <= morse.ditMaxTime) {          
           morse.buffer += '.';
         } else {
           morse.buffer += '-';
         }
+        // остановка таймера для символов точки и запятой
+        clearInterval(morse.charTimer);
+        morse.charTimer = 0;
+        morse.charT = 0;
 
-        this.stopCharTimer();
-        this.startGapTimer();
+        this.startGapTimer();// запуск таймера для определения паузы
         console.log(morse.buffer);
-        // myModuleView.printMorseOrStr(morse.buffer,'',this.morseToStr(morse.buffer))
+        myModuleView.printMorseOrStr(morse.buffer,'',this.morseToStr(morse.buffer)) // выводим полученный символ
         
-        // Account for bug triggered when pressing paddle button (e.g.) outside of body, then clicking into body, and depressing key
-        // if (o === undefined) { 
-        //     return
-        // }
         if (o.context.state === 'running') {
             g.gain.setTargetAtTime(0.0001, context.currentTime, 0.001)
             o.stop(context.currentTime + 0.05)
@@ -490,7 +468,7 @@
       
     }
 
-    this.handleMorseTapStart = (e) => {  
+    this.handleMorseTapStart = () => {  
 
       var AudioContext = window.AudioContext || window.webkitAudioContext;
       var ctx = new AudioContext();      
@@ -499,24 +477,22 @@
       if (morse.isRunning) {return;} 
       else {
           morse.isRunning = true;
-          if (( e.target.id !== "morse_button") || (e.repeat)) {return;}
-          else {  
-              if (context.state === 'interrupted') {
-                context.resume();
-              }              
-              o = context.createOscillator();
-              o.frequency.value = 600;
-              o.type = "sine";
-              
-              g = context.createGain();
-              g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime);
-              o.connect(g);
-              g.connect(context.destination);
-              o.start();
-              this.checkGapBetweenInputs();
-              clearInterval(morse.gapTimer);  
-              this.startCharTimer();
-          }
+          // if (context.state === 'interrupted') {
+          //   context.resume();
+          // }              
+          o = context.createOscillator();
+          o.frequency.value = 600;
+          o.type = "sine";          
+         
+          g = context.createGain();
+          // g.gain.exponentialRampToValueAtTime(1, ctx.currentTime);
+          g.gain.setValueAtTime(1, ctx.currentTime);
+          o.connect(g);
+          g.connect(context.destination);
+          o.start();
+          this.checkGapBetweenInputs();
+          clearInterval(morse.gapTimer);  
+          this.startCharTimer();
       }
       
     }
@@ -525,18 +501,7 @@
     
     // create quiz function
     this.createQuiz = (obj) => {
-      userdata = obj; 
-      // let userJSON = JSON.stringify(userdata);
-      // // console.log(userJSON);
-      
-      // this.addUser(userdata);
-      // // const dbRef = firebase.database().ref();
-      // let name = "my name";
-      // let value = "John Smith"
-      // // кодирует в my%20name=John%20Smith
-      // console.log(document.cookie);
-      // document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
-      // console.log(document.cookie);
+      userdata = obj;      
       
       if (!isQuizStarted) {
         isQuizStarted = true;
@@ -565,11 +530,9 @@
           values = (lang === 'eng') ? Object.values(morseCode) :  Object.values(morseCodeRus);
           break;
         case 'medium':
+        case "hard":
           codeArr = values = (lang === 'eng') ? words : wordsRus;          
-          break;
-        case 'hard':
-          console.log('hard is coming soon');
-          break;
+          break;        
       }
       // console.log(codeArr);
       for (let i=0; i < num; i++) {
@@ -583,12 +546,10 @@
             itemA = (context === 'writing') ? random[1] : random[0].toUpperCase();         
             break;
           case 'medium':
+          case "hard":
             itemQ = (context === 'writing') ? random.toUpperCase() : this.strToMorse(random, lang);
             itemA = (context === 'writing') ? this.strToMorse(random, lang) : random.toUpperCase();
-            break;
-          case 'hard':
-            console.log('hard is coming soon');
-            break;
+            break;          
         }
         console.log(itemQ, itemA, correct);
 
@@ -600,20 +561,22 @@
                                                             answer: `${itemA}`, 
                                                             num: correct};                                                            
           let options = sessionQuestions[`Q_${itemQ}`]['options'] = [];
-          for( let j=0; j < 4; j++) {
-            let item = (context === 'writing') ? values[Math.floor(Math.random() * values.length)] :
-                                                 letters[Math.floor(Math.random() * letters.length)].toUpperCase();
-            // let item = values[Math.floor(Math.random() * values.length)];
-
-            if (level === 'medium') item = (context === 'writing') ? this.strToMorse(item, lang) : item.toUpperCase();    
-            if (!options.includes(item) && (item !== itemA)){
-              options[j] = (j == correct) ? itemA : item;
-              // console.log(item);
-            } else {
-              j--;
-              console.log('double j');
-            }        
-          }
+          if (level !== 'hard'){ // если уровень не hard, то подбираем рандомно варианты ответов, для уровня вместо вариантов отображается текстАреа
+            for( let j=0; j < 4; j++) {
+              let item = (context === 'writing') ? values[Math.floor(Math.random() * values.length)] :
+                                                   letters[Math.floor(Math.random() * letters.length)].toUpperCase();
+  
+              if (level === 'medium') item = (context === 'writing') ? this.strToMorse(item, lang) : item.toUpperCase();    
+              if (!options.includes(item) && (item !== itemA)){
+                options[j] = (j == correct) ? itemA : item;
+                // console.log(item);
+              } else {
+                j--;
+                console.log('double j');
+              }        
+            }
+          } 
+          
 
         }
 
@@ -628,95 +591,94 @@
         let options = questions[index].options; 
         myModuleView.showQuestion(question, options, index, playerScore, userdata);   
       } else {
-        this.handleEndQuiz();
-        console.log(answers);
+        this.handleEndQuiz();        
       }
     }
 
     this.handleEndQuiz = () => {
-      let remark, remarkColor;
-      if (playerScore <= 3) {
-        remark = "Bad Grades, Keep Practicing."
-        remarkColor = "red"
-      }
-      else if (playerScore >= 4 && playerScore < 7) {
-          remark = "Average Grades, You can do better."
-          remarkColor = "orange"
-      }
-      else if (playerScore >= 7) {
-          remark = "Excellent, Keep the good work going."
-          remarkColor = "green"
-      }
-      let playerGrade = (playerScore / 10) * 100;
-      let name = userdata.name;
       
-      // myDB.ref('users/' + `user_${name.toLowerCase()}`).push({
-      //   score: `${playerScore}`,
-      //   wrong: `${wrongAttempt}`,
-      // })
+      console.log(answers);
+      console.log(userdata)
+      localStorage.setItem(`User_${loggedUser.name}_quiz_result`,JSON.stringify(answers));
+
+      // let remark, remarkColor;
+      // if (playerScore <= 3) {
+      //   remark = "Bad Grades, Keep Practicing."
+      //   remarkColor = "red"
+      // }
+      // else if (playerScore >= 4 && playerScore < 7) {
+      //     remark = "Average Grades, You can do better."
+      //     remarkColor = "orange"
+      // }
+      // else if (playerScore >= 7) {
+      //     remark = "Excellent, Keep the good work going."
+      //     remarkColor = "green"
+      // }
+      // let playerGrade = (playerScore / userdata.countQuestions) * 100;
+      // let name = loggedUser.name;
+      
+      myDB.ref('quiz/' + `user_${loggedUser.name.toLowerCase()}`).set({
+        score: `${playerScore}`,
+        username:`${loggedUser.name}`,
+        // wrong: `${wrongAttempt}`,
+        answers: answers,
+        userdata: userdata,
+      })      
+      .catch(function (error) {
+        console.error("Ошибка добавления информации: ", error);
+      });           
 
       let result = {
         score: playerScore,
         wrong: wrongAttempt,
-        remark: remark,
-        remarkColor: remarkColor,
-        grade: playerGrade,
-      }
-
-      // function writeNewPost(uid, username, picture, title, body) {
-      //   // A post entry.
-      //   var postData = {
-      //     author: username,
-      //     uid: uid,
-      //     body: body,
-      //     title: title,
-      //     starCount: 0,
-      //     authorPic: picture
-      //   };
+        answers: answers,
+        userdata: userdata,
+      }; 
       
-      //   // Get a key for a new Post.
-      //   var newPostKey = firebase.database().ref().child('posts').push().key;
-      
-      //   // Write the new post's data simultaneously in the posts list and the user's post list.
-      //   var updates = {};
-      //   updates['/posts/' + newPostKey] = postData;
-      //   updates['/user-posts/' + uid + '/' + newPostKey] = postData;
-      
-      //   return firebase.database().ref().update(updates);
-      // }
+      playerScore = wrongAttempt = 0;
 
       myModuleView.showScoreModal(result);
+
     }
 
     this.select = (elem) => myModuleView.select(elem);
 
     this.hideSelect = (elem) => myModuleView.hideSelect(elem);
     
-    this.checkAnswer = (curAnswer) => {
-      let okAnswer = questions[index].question.answer;
+    this.checkAnswer = (curAnswer,elemClass) => {
+      let okAnswer = questions[index].question.answer; // правильный ответ
 
-      answers[index] = {};
+      answers[index] = {}; // объект для хранения истории ответов
+      answers[index].question = questions[index].question.question; 
       answers[index].ok = okAnswer.toUpperCase();
-      answers[index].cur = curAnswer.toUpperCase();  
+      answers[index].cur = curAnswer.toUpperCase(); 
+      
       
       if (okAnswer == curAnswer) {
         console.log('right');
         playerScore++;
         answers[index].result = true;
-        myModuleView.setLabelBackground(curAnswer,'ok');        
+        myModuleView.setBackground(elemClass,curAnswer,'ok');        
       } else {
         console.log('wrong');
         wrongAttempt++;
         answers[index].result = false;
-        myModuleView.setLabelBackground(okAnswer,'ok');
-        myModuleView.setLabelBackground(curAnswer,'wrong'); 
+        if (elemClass === 'option') {
+          myModuleView.setBackground(elemClass,okAnswer,'ok');
+          myModuleView.setBackground(elemClass,curAnswer,'wrong');
+        } else {
+          myModuleView.setBackground(elemClass,curAnswer,'wrong');
+        }
+         
       } 
 
-      index++;
+      index++; // прибавляем номер вопроса
+      // устанавливаем смену вопроса через 2 секунды
       setTimeout(() => {
-        myModuleView.setLabelBackground();
+        myModuleView.fadeOutQForm();
+        myModuleView.setBackground(elemClass);        
         this.getNextQuestion();
-      }, 3000);
+      }, 2000);
       // console.log(playerScore + ', ' + wrongAttempt);
     };
 
@@ -727,16 +689,16 @@
     this.showToTopBtn = () => myModuleView.showToTopBtn()
     this.toTop = () => myModuleView.toTop();
     this.switchForm = (elem) => myModuleView.switchForm(elem);
-
-    this.closeScoreModal = () => {
-      myModuleView.closeScoreModal();
-    }
+    this.showAddUserForm = () => myModuleView.showAddUserForm();
+    this.hideAddUserForm = () => myModuleView.hideAddUserForm();
+    this.closeScoreModal = () => myModuleView.closeScoreModal();
 
     this.stopQuiz = () => {
        isQuizStarted = false;
        sessionQuestions = {};
        questions = null;
        index = 0;
+       playerScore = wrongAttempt = 0;
       //  debugger;
        myModuleView.removeQuiz();
     };
@@ -748,9 +710,9 @@
     }
 
     this.startChallenge = () => {
-      if (!isChallengeStarted) {
-        let level = challengeData.level = levels[challengeLevel].concat(challengeData.learned);
-        challengeData.sample = levels[challengeLevel].map((x) => x);
+      if (!isChallengeStarted) {        
+        let level = challengeData.level = levels[challengeData.challengeLevel].concat(challengeData.learned); // объединяем пройденные уровни с текущим
+        challengeData.sample = levels[challengeData.challengeLevel].map((x) => x); // делаем копию текущего уровня
         challengeData.points = 0;
         challengeData.lives = 4;
         challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
@@ -762,13 +724,13 @@
 
     this.checkChallengeAnswer = (inner) => {
       // debugger;      
-      console.log(challengeData.curQuestion, inner);
-      console.log(inner.toLowerCase() == challengeData.curQuestion.toLowerCase());
+      // console.log(challengeData.curQuestion, inner);
+      // console.log(inner.toLowerCase() == challengeData.curQuestion.toLowerCase());
       let q = challengeData.curQuestion;
       console.log(q);
       if (inner.toLowerCase() == challengeData.curQuestion.toLowerCase()) {
         if (challengeData.hasOwnProperty(`${q}`)) {          
-          challengeData[`${q}`]++;
+          challengeData[`${q}`]++;          
           if (challengeData[`${q}`] == 4) { 
             if (!challengeData.learned.includes(q)) challengeData.learned.push(q); 
             delete challengeData[`${q}`]; 
@@ -777,7 +739,8 @@
           }          
         } else {
           challengeData[`${q}`] = 1;
-        }        
+        }  
+        challengeData.points++;      
         myModuleView.showCorrectOrFalse(true);
         myModuleView.makeBtnGreen(inner);
       } else {         
@@ -792,17 +755,26 @@
           isChallengeStarted = false;
         }        
       }
-      console.log(challengeData);     
-      if (challengeData.level.length > 0) {
+      console.log(challengeData);  
+      console.log(challengeIndex); 
+      console.log(challengeData.level.length);   
+      if (challengeData.level.length > 0 && challengeIndex < challengeData.level.length+5) {
         challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
         this.playMorse(false,true);
+        challengeIndex++;
       } else {
         myModuleView.challengeOver();
         myModuleView.disableBtns();
         isChallengeStarted = false;
-        challengeLevel++;
-        let levelComplited = challengeData.sample.map(x => x);
-        challengeData.levelsComplited.push(levelComplited);
+        challengeIndex = 0;
+        if (challengeData.level.length == 0) {
+          challengeData.challengeLevel++;
+          challengeData.levelsComplited.lastComplited++;
+          let levelComplited = challengeData.sample.map(x => x);
+          challengeData.levelsComplited.levels.push(levelComplited);
+        }
+        
+        this.addChallengeInfo();
         // debugger;
       }
       
@@ -810,6 +782,17 @@
     this.stopChallenge = () => {
       myModuleView.challengeOver();
       isChallengeStarted = false;
+    }
+
+    this.addChallengeInfo = () => {
+      myDB.ref('challenge/' + `user_${loggedUser.name.toLowerCase()}`).set({
+        score: `${challengeData.points}`,
+        username:`${loggedUser.name}`,
+        data: challengeData,
+      })      
+      .catch(function (error) {
+        console.error("Ошибка добавления информации: ", error);
+      }); 
     }
 
     
