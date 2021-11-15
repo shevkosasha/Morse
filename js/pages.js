@@ -185,7 +185,7 @@ const Practice = {
                   <label for="fid-level3">Hard</label>
                 </div>
 
-                <input type="number" class="num-questions">
+                <!--<input type="number" class="num-questions">-->
               </div>
 
               <div class="next-button-container">
@@ -281,7 +281,7 @@ const Practice = {
               </div>
 
               <div class="next-button-container">
-                <button class='check-button'">Check Answer</button>
+                <!--<button class='check-button'">Check Answer</button>-->
                 <span>&nbsp;&nbsp;&nbsp;</spam>
                 <button class='next-button'">Next Question</button>
               </div>
@@ -476,7 +476,7 @@ const Info = {
 
                 </tbody>
               </table>
-              <a href='#' class="delete-quiz-info-btn" title="Add user"> Delete Quiz Info </a>
+              <!--<a href='#' class="delete-quiz-info-btn" title="Add user"> Delete Quiz Info </a>-->
             </div>
           </div>
       </div>

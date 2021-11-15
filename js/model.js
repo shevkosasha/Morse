@@ -168,14 +168,14 @@
       let name = userName.trim();
       let email = userEmail.trim();
       let pass = userPass.trim();
-      firebase.auth().createUserWithEmailAndPassword(userEmail.trim(), userPass.trim())
+      firebase.auth().createUserWithEmailAndPassword(email, pass)
         .then(function (userName) {
           that.addUser(name,email);
           // myModuleView.closeLoginForm();
           console.log(`Пользователь ${userName} добавлен в коллецию users`);
         })
         .then(function (userName,userEmail) {
-          
+          that.login(email,pass);
           // myModuleView.closeLoginForm();
           console.log(`Пользователь ${userName} залогинен в коллецию users`);
         })
@@ -187,7 +187,7 @@
           // ...
         });
         
-      that.login(email,pass);
+      // that.login(email,pass);
       
     },
 
@@ -262,6 +262,17 @@
       });
     };
 
+    this.deleteUserQuizInfo = (userid) => {
+      myDB.ref('quiz/' + userid).remove()
+      .then(function () {
+          console.log("Пользователь удален из коллеции challenge");
+      })
+      .catch(function (error) {
+          console.error("Ошибка удаления пользователя: ", error);
+      });
+      this.getQuizInfo();
+    },
+
     this.getChallengeInfo = () => {
       myDB.ref("challenge/").once("value")
       .then(function(snapshot) {
@@ -272,7 +283,19 @@
           console.log("Error: " + error.code);
       });
     };
+
+    this.deleteUserChallengeInfo = (userid) => {
+      myDB.ref('challenge/' + userid).remove()
+      .then(function () {
+          console.log("Пользователь удален из коллеции challenge");
+      })
+      .catch(function (error) {
+          console.error("Ошибка удаления пользователя: ", error);
+      });
+      this.getChallengeInfo();
+    },
   
+    
     this.showLoginForm = () => myModuleView.showLoginForm();
     this.closeLoginForm = () => myModuleView.closeLoginForm();
 

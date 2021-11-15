@@ -162,7 +162,7 @@
     transition: .3s;
   }
   .alphabet-challenge-btn:hover {
-    background: #2e9169;
+    background: #8388ce;
     box-shadow: 0 15px 20px rgba(24, 68, 51, 0.4);
     color: white;
     transform: translateY(-7px);

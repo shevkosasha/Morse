@@ -248,12 +248,8 @@ function ModuleController (){
 
       if (e.target.classList.contains('add-user-btn')) {
         e.preventDefault();
-        e.stopPropagation();        
-        // console.log(e.target);
+        e.stopPropagation(); 
         myModuleModel.showAddUserForm(e.target);
-        // let name = e.target.parentElement.querySelector('#add_user-name').value;
-        // let email = e.target.parentElement.querySelector('#add_user-email').value;
-        // myModuleModel.addUser(name,email);
       }
       // add-user-btn-form
       if (e.target.classList.contains('add-user-btn-form')) {
@@ -264,7 +260,21 @@ function ModuleController (){
         let email = e.target.parentElement.querySelector('#add_user-email').value;
         myModuleModel.addUser(name,email);    
         myModuleModel.hideAddUserForm(e.target);        
-      }      
+      }  
+      
+      if (e.target.classList.contains('delete-quiz-user-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
+        myModuleModel.deleteUserQuizInfo(e.target.parentElement.parentElement.dataset.id);
+      }
+
+      
+      if (e.target.classList.contains('delete-challenge-user-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
+        myModuleModel.deleteUserChallengeInfo(e.target.parentElement.parentElement.dataset.id);
+      }
+
     });       
     
   },
