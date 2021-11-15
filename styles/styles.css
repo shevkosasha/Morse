@@ -6,12 +6,17 @@
   background-color:#e3e1eb;
 } */
 
-#users-list__container{
-  width:70%;
+#content{
+  width: 70%;
+  margin: auto;
 }
+
+#users-list__container,
 #quiz-results_container,
 #challenge-results_container {
   width:70%;
+ justify-content: center;
+ margin: auto;
 }
 
 .table {
@@ -91,11 +96,12 @@ div.scrollup:hover {
   float: right;
   vertical-align: center;
   margin: 20px;
-  clear: both;
+  /* clear: both; */
 }
 .log-and-hi{
-  clear: both;
-
+  /* clear: both; */
+  height: 60px;
+  background-color:#90b5d6;
 }
 
 

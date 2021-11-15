@@ -62,7 +62,7 @@
   transition: .3s;
 }
 .alphabet-button:hover {
-  background: #2e9169;
+  background: #8388ce;
   box-shadow: 0 15px 20px rgba(24, 68, 51, 0.4);
   color: white;
   transform: translateY(-7px);
@@ -110,8 +110,6 @@ textarea {
   user-select: none;
   width: 60px;
   height: 60px;
-  /* margin-top: 30px;
-  margin-bottom: 10px; */
   border-radius: 30%;
   align-self: center;
   display: flex;
@@ -123,7 +121,8 @@ textarea {
   transition: box-shadow 40ms ease-out,width .5s ease-out,background .5s ease-out,-webkit-transform 40ms ease-out;
   transition: transform 40ms ease-out,box-shadow 40ms ease-out,width .5s ease-out,background .5s ease-out;
   transition: transform 40ms ease-out,box-shadow 40ms ease-out,width .5s ease-out,background .5s ease-out,-webkit-transform 40ms ease-out;
-  background: rgba(112,138,144,.5);
+  background: #293241;
+  color:white;
 }
 .morseButton .paddle{
   display: none;

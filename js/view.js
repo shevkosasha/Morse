@@ -287,7 +287,7 @@ function ModuleView() {
                                                                  Quiz context: ${result.userdata.context} <br>
                                                                  Quiz language: ${result.userdata.language} <br>
                                                                  Count of questions: ${result.userdata.countQuestions} <br>
-                                                                 Correct answers: ${result.userdata.countQuestions} <br>`;
+                                                                 Correct answers: ${result.score} <br>`;
     
     
     let resultContainer =  myModuleContainer.querySelector('.quiz-finish-list');

@@ -170,7 +170,7 @@ const Practice = {
                 </div>
               </div>
 
-              <h2>Choose quiz level</h2>
+              <h2>Choose quiz level & count of questions</h2>
               <div class="form_toggle levels">                
                 <div class="form_toggle-item easy level">
                   <input id="fid-level1" type="radio" name="level" value="easy" checked>
@@ -184,6 +184,8 @@ const Practice = {
                   <input id="fid-level3" type="radio" name="level" value="hard">
                   <label for="fid-level3">Hard</label>
                 </div>
+
+                <input type="number" class="num-questions">
               </div>
 
               <div class="next-button-container">

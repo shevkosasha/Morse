@@ -1,7 +1,7 @@
 
 .game-quiz-container{
   width: 40rem;
-  height: 30rem;
+  height: 35rem;
   background-color: ghostwhite;
   display: flex;
   flex-direction: column;
@@ -227,13 +227,15 @@ input[type="radio"] {
   background: none;
   outline: none;
   border: 1px solid rgb(252, 242, 241);
-  color: white;
+  background-color:blanchedalmond;
+  color: black;
   font-size: 1.1rem;
   cursor: pointer;
-  border-radius: 20px;
+  border-radius: 10px;
 }
 .modal-button-container button:hover{
   background-color: rgb(83, 82, 82);
+  color:blanchedalmond;
 }
 
 
@@ -259,8 +261,12 @@ input[type="radio"] {
   border: 1px solid #999;
   border-right: none;
   cursor: pointer;
-  user-select: none;  
-  
+  user-select: none;    
+}
+
+.form_toggle input{
+  width:70px;
+  margin-left: 20px;
 }
  
 .writing label,
@@ -278,7 +284,7 @@ input[type="radio"] {
 #username_input input[type=text] {
   padding:10px;
   border:0;
-  box-shadow:0 0 15px 4px rgba(37, 36, 36, 0.06);
+  box-shadow:0 0 15px 4px #b4d2d9;
 }
 #username_input .wrong-name{
   display: block;
@@ -293,7 +299,7 @@ input[type="radio"] {
 .form_toggle .level input[type=radio]:checked + label,
 .form_toggle .level input[type=checkbox]:checked + label
 {
-  background: #bbffbb;
+  background: #ee6c4d;
 }
 
 

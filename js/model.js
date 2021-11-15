@@ -518,7 +518,8 @@
       let lang = userdata.language;
       let context = userdata.context;
       // count of questions for current quiz according to level
-      let num = userdata.countQuestions = (level === 'easy') ? 10 : (level === 'medium') ? 15 : 20;
+      // let num = userdata.countQuestions = (level === 'easy') ? 10 : (level === 'medium') ? 15 : 20;
+      let num = userdata.countQuestions = 10;
 
       let codeArr = [];
       let values = [];
@@ -600,23 +601,7 @@
       console.log(answers);
       console.log(userdata)
       localStorage.setItem(`User_${loggedUser.name}_quiz_result`,JSON.stringify(answers));
-
-      // let remark, remarkColor;
-      // if (playerScore <= 3) {
-      //   remark = "Bad Grades, Keep Practicing."
-      //   remarkColor = "red"
-      // }
-      // else if (playerScore >= 4 && playerScore < 7) {
-      //     remark = "Average Grades, You can do better."
-      //     remarkColor = "orange"
-      // }
-      // else if (playerScore >= 7) {
-      //     remark = "Excellent, Keep the good work going."
-      //     remarkColor = "green"
-      // }
-      // let playerGrade = (playerScore / userdata.countQuestions) * 100;
-      // let name = loggedUser.name;
-      
+            
       myDB.ref('quiz/' + `user_${loggedUser.name.toLowerCase()}`).set({
         score: `${playerScore}`,
         username:`${loggedUser.name}`,
@@ -723,9 +708,7 @@
     }
 
     this.checkChallengeAnswer = (inner) => {
-      // debugger;      
-      // console.log(challengeData.curQuestion, inner);
-      // console.log(inner.toLowerCase() == challengeData.curQuestion.toLowerCase());
+     
       let q = challengeData.curQuestion;
       console.log(q);
       if (inner.toLowerCase() == challengeData.curQuestion.toLowerCase()) {
@@ -757,8 +740,9 @@
       }
       console.log(challengeData);  
       console.log(challengeIndex); 
-      console.log(challengeData.level.length);   
-      if (challengeData.level.length > 0 && challengeIndex < challengeData.level.length+5) {
+      console.log(challengeData.level.length); 
+      let maxAttempts = challengeData.level.length*4 + 4; // max answer attempts  
+      if (challengeData.level.length > 0 && challengeIndex < maxAttempts) {
         challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
         this.playMorse(false,true);
         challengeIndex++;
