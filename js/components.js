@@ -39,7 +39,7 @@ const NavBar = {
       <label for="menu-toggle" class="menu-icon"><i class="fa fa-bars"></i></label>     
         <div id="mainmenu" class="slideout-sidebar ">
           <ul>
-          <li><a class="mainmenu__link" href="#main">Главная</a></li>
+          <li><a class="mainmenu__link" href="#main">About Morse Code</a></li>
           <!--<li><a class="mainmenu__link" href="#about">About Morse Code</a></li>-->
           <li><a class="mainmenu__link" href="#explore">Explore Morse Code</a></li>
           <li><a class="mainmenu__link" href="#practice">Practice Morse Code</a></li>
