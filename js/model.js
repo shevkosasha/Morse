@@ -711,12 +711,12 @@
      
       let q = challengeData.curQuestion;
       console.log(q);
-      if (inner.toLowerCase() == challengeData.curQuestion.toLowerCase()) {
-        if (challengeData.hasOwnProperty(`${q}`)) {          
-          challengeData[`${q}`]++;          
-          if (challengeData[`${q}`] == 4) { 
-            if (!challengeData.learned.includes(q)) challengeData.learned.push(q); 
-            delete challengeData[`${q}`]; 
+      if (inner.toLowerCase() == challengeData.curQuestion.toLowerCase()) {         //если выбранный вариант правильный
+        if (challengeData.hasOwnProperty(`${q}`)) {                                 // то проверяем, есть ли такой ключ (символ) в объекте данных челленджа
+          challengeData[`${q}`]++;                                                  // если есть, прибавляем его значение на единицу
+          if (challengeData[`${q}`] == 4) {                                         // если для этого символа уже дано 4 правильных ответа
+            if (!challengeData.learned.includes(q)) challengeData.learned.push(q);  // помещаем его в массив изученных символов
+            delete challengeData[`${q}`];                                           // а сам ключ символа удаляем из объекта
             challengeData.level = challengeData.level.filter((item) => item !== q);
             console.log(challengeData.level);
           }          
