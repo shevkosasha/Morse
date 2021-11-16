@@ -2,6 +2,7 @@ function ModuleController (){
   let myModuleContainer = null;
   let myModuleModel = null;
   let isQuizHandlerAdded = false;
+  let hashPageName;
 
   this.init = function(container, model) {
     myModuleContainer = container;
@@ -14,7 +15,7 @@ function ModuleController (){
         isQuizHandlerAdded = false;
         myModuleModel.stopQuiz();
       }
-      const hashPageName = location.hash.slice(1).toLowerCase();
+      hashPageName = location.hash.slice(1).toLowerCase();
       this.updateState(hashPageName); //первая отрисовка
     }
 
@@ -175,7 +176,7 @@ function ModuleController (){
       if (e.target.classList.contains('alpha-challenge') || e.target.classList.contains('alphabet-challenge-btn')) {
         if (e.target.classList.contains('alpha-challenge') && e.target.parentNode.classList.contains('disabled')) {
           return;
-        } else if (e.target.classList.contains('disabled')){
+        } else if (e.target.classList.contains('disabled') || e.target.classList.contains('right')){
           return;
         } else {
           e.preventDefault();
@@ -204,6 +205,7 @@ function ModuleController (){
         myModuleModel.login(
             document.querySelector("#login-email").value,
             document.querySelector("#login-password").value,
+            hashPageName
         );
       }
 
@@ -211,9 +213,10 @@ function ModuleController (){
         e.preventDefault();
         e.stopPropagation();
         myModuleModel.createUser(
-          document.querySelector("#signup-name").value,
+            document.querySelector("#signup-name").value,
             document.querySelector("#signup-email").value,
-            document.querySelector("#signup-password").value,            
+            document.querySelector("#signup-password").value,  
+            hashPageName       
         );
       }
 
@@ -263,6 +266,7 @@ function ModuleController (){
       }  
       
       if (e.target.classList.contains('delete-quiz-user-btn')) {
+        debugger;
         e.preventDefault();
         e.stopPropagation();
         myModuleModel.deleteUserQuizInfo(e.target.parentElement.parentElement.dataset.id);
@@ -270,8 +274,10 @@ function ModuleController (){
 
       
       if (e.target.classList.contains('delete-challenge-user-btn')) {
+        debugger;
         e.preventDefault();
         e.stopPropagation();
+        console.log(e.target.parentElement.parentElement.dataset.id);
         myModuleModel.deleteUserChallengeInfo(e.target.parentElement.parentElement.dataset.id);
       }
 
@@ -287,7 +293,6 @@ function ModuleController (){
     let parentDiv = myModuleContainer.querySelector('.game-options-container'); 
     let selectedOption = parentDiv.querySelector('.selected');
     let textOption = parentDiv.querySelector('.answer-text-quiz');
-    // let currentAnswer = (selectedOption) ? selectedOption.querySelector('label').textContent : textOption.value;
     
     if (e.target.className === 'next-button'){
       if (selectedOption || textOption){ 

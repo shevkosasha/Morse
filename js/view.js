@@ -31,10 +31,11 @@ function ModuleView() {
     if (routeName === 'challenge') this.disableBtns();
 
     if (routeName === 'practice') {
+      // debugger;
      myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
      myModuleContainer.querySelector('#user_name').value = (currentUserName) ? currentUserName : '';
     }   
-    
+    if (routeName === 'challenge') this.disableBtns();
     
     // this.showLoginForm();
     this.updateButtons(routesObj[routeName].id);
@@ -61,8 +62,6 @@ function ModuleView() {
   }
 
   this.logIn = () => {
-    // document.querySelector('.hi-section').textContent = 'Hi';
-    // document.querySelector('.log-in').textContent = 'Log out';
     document.querySelector('.log-out').classList.replace('log-in','log-out');
   }
 
@@ -159,26 +158,36 @@ function ModuleView() {
     })
   };
 
-  this.startChallenge = (level) => {
+  this.setButtonsColors = (level) => {
     myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => { 
-      // debugger;
+      if (btn.classList.contains('right')) btn.classList.remove('right');
       let x = btn.querySelector('.alpha-challenge').textContent.toLowerCase();
       if (level.includes(x) ) {
         btn.classList.remove('disabled');
         btn.classList.remove('right');
       }
-    });     
+    });    
+  };
+
+
+  this.startChallenge = (levelNum) => {
+       
     myModuleContainer.querySelector('#start_challenge').classList.add('disabled');
     myModuleContainer.querySelector('#stop_challenge').className = 'gradient-button stop-challenge';
-    myModuleContainer.querySelector('#next_level_challenge').classList.remove('unvisible');
+    // myModuleContainer.querySelector('#next_level_challenge').classList.remove('unvisible');
     myModuleContainer.querySelector('#caption_challenge').classList.add('unvisible');  //
 
     myModuleContainer.querySelector('#challenge_question').classList.remove('unvisible');
     myModuleContainer.querySelector('#challenge_lives').classList.remove('unvisible');
-    myModuleContainer.querySelector('.lives').classList.remove('unvisible');
-    myModuleContainer.querySelector('.current-result').classList.remove('unvisible');
     myModuleContainer.querySelector('#alphabet_challenge').classList.remove('unvisible');
+
+    myModuleContainer.querySelector('.current-level-info').innerHTML = levelNum;
     
+  }
+
+  this.updateChallengeScore = (level,points) => {
+    myModuleContainer.querySelector('.current-score-info').innerHTML = points;
+    myModuleContainer.querySelector('.current-level-info').innerHTML = level;
   }
 
   this.printMorseOrStr = (morseStr,field, str = '') =>{
@@ -200,6 +209,10 @@ function ModuleView() {
       top: -document.documentElement.scrollHeight,
       behavior: 'smooth'
     });
+  },
+
+  this.setQuizUserName = (name) => {
+    myModuleContainer.querySelector('#user_name').value = (name) ? name : '';
   }
 
   this.showQuestion = (question, options, index, score, userdata) => {
@@ -398,22 +411,23 @@ function ModuleView() {
   }
 
   this.printQuizUsers = (userList) => {
+    // debugger;
     let userListContainer = document.querySelector('.quiz-list');
     userListContainer.innerHTML = '';
-    for (let user in userList) {
-      userListContainer.appendChild(createRow(user, userList));
+    for (let [key,value] of Object.entries(userList)) {
+      userListContainer.appendChild(createRow(key,value));
     }
     
 
-    function createRow(user, userList) {
+    function createRow(name, score) {
         let row = document.createElement('tr'),
             td1 = document.createElement('td'),
             td2 = document.createElement('td'),
             td3 = document.createElement('td');
             
-        row.setAttribute('data-id', user);
-        td1.innerHTML = `<strong>${userList[user].username}</strong>`;
-        td2.innerHTML = `${userList[user].score}`;
+        row.setAttribute('data-id', name);
+        td1.innerHTML = `<strong>${name}</strong>`;
+        td2.innerHTML = `${score}`;
         td3.innerHTML = `<a href="#" class="delete-quiz-user-btn" title="delete user quiz info"> Delete info </a>`;
         row.appendChild(td1);
         row.appendChild(td2);
@@ -424,16 +438,18 @@ function ModuleView() {
   },
 
   this.printChallengeUsers = (userList) => {
+    console.log(userList);
+    // debugger;
     let userListContainer = document.querySelector('.challenge-list');
     userListContainer.innerHTML = '';
-    for (let user in userList) {
-      userListContainer.appendChild(createRow(user, userList));
+    for (let [key,value] of Object.entries(userList)) {
+      userListContainer.appendChild(createRow(key,value));
     }
 
     console.log(userList);
     
 
-    function createRow(user, userList) {
+    function createRow(user, props) {
         let row = document.createElement('tr'),
             td1 = document.createElement('td'),
             td2 = document.createElement('td'),
@@ -441,9 +457,9 @@ function ModuleView() {
             td4 = document.createElement('td');
             
         row.setAttribute('data-id', user);
-        td1.innerHTML = `<strong>${userList[user].username}</strong>`;
-        td2.innerHTML = `${userList[user].score}`;
-        td3.innerHTML = `${userList[user].data.levelsComplited.lastComplited}`;
+        td1.innerHTML = `<strong>${user}</strong>`;
+        td2.innerHTML = `${props.score}`;
+        td3.innerHTML = `${props.level}`;
         td4.innerHTML = `<a href="#" class="delete-challenge-user-btn" title="delete user challenge info"> Delete info </a>`;
         row.appendChild(td1);
         row.appendChild(td2);

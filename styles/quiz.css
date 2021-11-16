@@ -94,7 +94,7 @@ span img {
 span label{
   position: relative;
   width: 70%;
-  height: 100%;
+  /* height: 100%; */
   /* display: flex; */
   /* align-items: center; */
   text-align: center;
@@ -112,7 +112,7 @@ span img:hover{
   -ms-transform: scale(1.25);
   -webkit-transform: scale(1.25);
   transform: scale(1.25);
-  color: white;
+  color: rgb(10, 10, 10);
 }
 
 #answer_quiz{
@@ -172,8 +172,8 @@ input[type="radio"] {
   left: 0;
   top: 30px;
   width: 100%; 
-  height: 95%; 
-  overflow: auto; 
+  /* height: 95%;  */
+  /* overflow: auto;  */
   /* background-color: gray;  */
   flex-direction: column;
   align-items: center;
@@ -183,9 +183,9 @@ input[type="radio"] {
 }
 
 .modal-content-container{
-  height: 40rem;
+  /* height: 40rem; */
   width: 90%;
-  background-color: rgb(209, 205, 205);
+  background-color: #fefefe;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -194,10 +194,13 @@ input[type="radio"] {
 }
 
 .modal-content-container h1{
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   height: 3rem;
-  color: rgb(231, 110, 110);
+  color: #334c6c;
   text-align: center;
+  font-weight: 700;
+  padding: 30px 0 0;
+  margin: 0;
 }
 
 .grade-details{
@@ -219,6 +222,8 @@ input[type="radio"] {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 20px;
+  background: #90b5d6;
 }
 
 .modal-button-container button{
@@ -394,4 +399,9 @@ input[type="radio"] {
 .quiz_result-finish-list{
   margin-top: 20px;
 }
+
+.quiz_result-finish-list h5{
+  line-height: 1.5;
+}
+
 

@@ -35,7 +35,7 @@ const NavBar = {
   render: (customClass = "") => {
     return `
     <nav class="mainmenu ${customClass}" id="mainmenu">
-      <input type="checkbox" id="menu-toggle" />
+      <input type="checkbox" id="menu-toggle" checked/>
       <label for="menu-toggle" class="menu-icon"><i class="fa fa-bars"></i></label>     
         <div id="mainmenu" class="slideout-sidebar ">
           <ul>

@@ -4,6 +4,7 @@
 
     let myModuleView = null;
     let loggedUser = null;
+    let page = null;
     //переменные для квиза
     let isQuizStarted = false;
     let sessionQuestions = {};//объект для вопросов квиза
@@ -49,7 +50,7 @@
       },
       learned:[],
       points: 0,
-      challengeLevel: 0
+      levelNum: 0
     };
     let challengeIndex = 0;   
 
@@ -69,8 +70,10 @@
     },
 
     this.updateState = (pageName) => {
-      myModuleView.renderContent(pageName); 
-      if (pageName === 'info' && loggedUser.name) {
+      page = pageName;
+      myModuleView.renderContent(pageName);
+      
+      if (pageName === 'info' && loggedUser.name !== '') {
         myModuleView.hideWarningInfo();
         this.getUsersList();
         this.getQuizInfo();  
@@ -101,8 +104,7 @@
         }
     },
 
-    this.login = function(userEmail, userPass, pageName) {
-      
+    this.login = function(userEmail, userPass) {
         if (userEmail && userPass) {
           firebase.auth().signInWithEmailAndPassword(userEmail, userPass)
           .catch(function(error) {
@@ -131,10 +133,16 @@
                   localStorage.setItem(`User_${username}`,JSON.stringify(userData));
                   localStorage.setItem('Morse_current_user',JSON.stringify(currentUser)); // сохраняем авторизованного пользователя в localStorage
                   loggedUser = that.getUserFromLocalStorage();
+
                   }
               }).then(() => {     
+                myModuleView.setUserName(loggedUser.name);
                 myModuleView.closeLoginForm();
                 myModuleView.sayHi(username);
+                that.updateState(page);
+                if (page === 'practice') {myModuleView.setQuizUserName(loggedUser.name)};
+                // console.log(that);
+                // console.log(page);
               }).catch(function (error) {
                   console.log("Error: " + error.code);
               });              
@@ -158,8 +166,10 @@
   
     this.logout = function() {
         firebase.auth().signOut();   
-        this.clearLocalStorageData()   
-        console.log("Пшёл вон! =)");
+        this.clearLocalStorageData(); 
+        loggedUser.name = '';
+        myModuleView.setUserName(loggedUser.name);
+        console.log("Bye Bye!");
         myModuleView.logOut();
     },
 
@@ -219,7 +229,7 @@
             this.view.sayHi(username);
             }
         });
-    }
+    },
 
     this.getUsersList = function() {
         myDB.ref("users/").once("value")
@@ -230,7 +240,7 @@
         }).catch(function (error) {
             console.log("Error: " + error.code);
         });
-    }
+    },
 
     this.printUsersList = function() {
         myDB.ref("users/").on("value", function(snapshot) {
@@ -252,18 +262,45 @@
     },
 
     this.getQuizInfo = () => {
+      let list = {};
       myDB.ref("quiz/").once("value")
       .then(function(snapshot) {
-          console.log("Quiz list:");
-          console.log(snapshot.val());
-          myModuleView.printQuizUsers(snapshot.val());
-      }).catch(function (error) {
+          console.log("Quiz list:");         
+          let quizUsers = snapshot.val();
+          Object.keys(quizUsers).forEach(key => {
+            var val = quizUsers[key];
+            let username = val.username;
+            let score = val.score;
+            if(score){
+                list[username] = score;
+            }
+          })
+          // console.log(list);
+
+          let sortList = (list)=> {
+            var sortable = [];
+            for (var key in list) {
+                sortable.push([key, list[key]]);
+            }        
+            sortable.sort(function(a, b) {
+                return (a[1] > b[1] ? -1 : (a[1] > b[1] ? 1 : 0));
+            });        
+            var orderedList = {};
+            for (var idx in sortable) {
+                orderedList[sortable[idx][0]] = sortable[idx][1];
+            }
+            return orderedList;
+          }
+
+          myModuleView.printQuizUsers(sortList(list));
+
+        }).catch(function (error) {
           console.log("Error: " + error.code);
       });
     };
 
     this.deleteUserQuizInfo = (userid) => {
-      myDB.ref('quiz/' + userid).remove()
+      myDB.ref('quiz/' + `user_${userid.toLowerCase()}`).remove()
       .then(function () {
           console.log("Пользователь удален из коллеции challenge");
       })
@@ -274,18 +311,56 @@
     },
 
     this.getChallengeInfo = () => {
+      let listScores = {};
+      let listLevels = {};
       myDB.ref("challenge/").once("value")
       .then(function(snapshot) {
-          console.log("Challenge list:");
-          console.log(snapshot.val());
-          myModuleView.printChallengeUsers(snapshot.val());
+        console.log("Challenge list:");         
+        let challengeUsers = snapshot.val();
+        Object.keys(challengeUsers).forEach(key => {
+          var val = challengeUsers[key];
+          let username = val.username;
+          let score = val.score;
+          let level = val.level;
+          if(score) listScores[username] = +score;
+          if(level) listLevels[username] = +level;
+        })
+        console.log(listScores);
+        console.log(listLevels);
+
+        let sortList = (list)=> {
+          var sortable = [];
+          for (var key in list) {
+              sortable.push([key, list[key]]);
+          }        
+          sortable.sort(function(a, b) {
+              return (a[1] > b[1] ? -1 : (a[1] > b[1] ? 1 : 0));
+          });        
+          var orderedList = {};
+          for (var idx in sortable) {
+              orderedList[sortable[idx][0]] = sortable[idx][1];
+          }
+          return orderedList;
+        }
+
+        let ordered = sortList(listScores);
+        let result = {};
+        console.log(ordered);
+        // debugger;
+        for (let [key,value] of Object.entries(ordered)) {
+          result[key] = {};
+          result[key].score = value;
+          result[key].level = listLevels[key]
+        }
+
+        myModuleView.printChallengeUsers(result);
       }).catch(function (error) {
           console.log("Error: " + error.code);
       });
     };
 
     this.deleteUserChallengeInfo = (userid) => {
-      myDB.ref('challenge/' + userid).remove()
+      myDB.ref('challenge/' + `user_${userid.toLowerCase()}`).remove()
       .then(function () {
           console.log("Пользователь удален из коллеции challenge");
       })
@@ -294,8 +369,48 @@
       });
       this.getChallengeInfo();
     },
+
+    this.addChallengeInfo = () => {
+      myDB.ref('challenge/' + `user_${loggedUser.name.toLowerCase()}`).set({
+        score: `${challengeData.points}`,
+        level: `${challengeData.levelsComplited.lastComplited + 1}`,
+        lastComplited: `${challengeData.levelsComplited.lastComplited + 1}`,
+        username:`${loggedUser.name}`,
+        data: challengeData,
+      })      
+      .catch(function (error) {
+        console.error("Ошибка добавления информации: ", error);
+      }); 
+    }
+
+    this.updateChallengeInfo =() => {
+
+      myDB.ref('challenge/' + `user_${loggedUser.name.toLowerCase()}`).once("value",snapshot => {
+        if (snapshot.exists()) {
+          let user = snapshot.val();
+          let name = user.username;
+
+          let prevScore  = user.score;
+          let currentScore =challengeData.points;
+          let prevLevel =user.level;
+          let currentLevel = challengeData.levelsComplited.lastComplited;
+
+          let scoreToSave = (currentScore > prevScore) ? currentScore : prevScore;
+          let levelToSave = (currentLevel > prevLevel) ? currentLevel : prevLevel;
+
+          myDB.ref('challenge/' + `user_${loggedUser.name.toUpperCase()}`).update({
+            score: `${scoreToSave}`, 
+            level: `${levelToSave}`,
+            lastComplited: `${challengeData.levelsComplited.lastComplited + 1}`,
+          })
+        } else {
+          this.addChallengeInfo();
+        }        
+      });
+      //   myModuleView.printChallengeUsers(result);
+    }
   
-    
+
     this.showLoginForm = () => myModuleView.showLoginForm();
     this.closeLoginForm = () => myModuleView.closeLoginForm();
 
@@ -718,40 +833,54 @@
     }
 
     this.startChallenge = () => {
-      if (!isChallengeStarted) {        
-        let level = challengeData.level = levels[challengeData.challengeLevel].concat(challengeData.learned); // объединяем пройденные уровни с текущим
-        challengeData.sample = levels[challengeData.challengeLevel].map((x) => x); // делаем копию текущего уровня
+      if (!isChallengeStarted) { 
+        this.setNextChallengeLevel();     
+        // let level = challengeData.level = levels[challengeData.challengeLevel].concat(challengeData.learned); // объединяем пройденные уровни с текущим
+        // challengeData.sample = levels[challengeData.challengeLevel].map((x) => x); // делаем копию текущего уровня
         challengeData.points = 0;
-        challengeData.lives = 4;
-        challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
-        myModuleView.startChallenge(level);
-        this.playMorse(false,true);
+        challengeData.lives = 4;        
+        myModuleView.startChallenge(challengeData.levelNum);
+        myModuleView.setButtonsColors(challengeData.level);
+        this.nextChallengeQuestion();
+        // challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);        
+        // this.playMorse(false,true);
         isChallengeStarted = true;
       }      
     }
 
+    this.setNextChallengeLevel = () => {    
+      // debugger;  
+      challengeData.level = levels[challengeData.levelNum].concat(challengeData.learned); // объединяем пройденные уровни с текущим
+      challengeData.sample = levels[challengeData.levelNum].map((x) => x);
+      myModuleView.setButtonsColors(challengeData.level);
+    }
+    this.nextChallengeQuestion = () => {
+      challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
+      this.playMorse(false,true);
+    }
+
     this.checkChallengeAnswer = (inner) => {
-     
+      // debugger; 
       let q = challengeData.curQuestion;
-      console.log(q);
       if (inner.toLowerCase() == challengeData.curQuestion.toLowerCase()) {         //если выбранный вариант правильный
         if (challengeData.hasOwnProperty(`${q}`)) {                                 // то проверяем, есть ли такой ключ (символ) в объекте данных челленджа
           challengeData[`${q}`]++;                                                  // если есть, прибавляем его значение на единицу
           if (challengeData[`${q}`] == 4) {                                         // если для этого символа уже дано 4 правильных ответа
             if (!challengeData.learned.includes(q)) challengeData.learned.push(q);  // помещаем его в массив изученных символов
             delete challengeData[`${q}`];                                           // а сам ключ символа удаляем из объекта
-            challengeData.level = challengeData.level.filter((item) => item !== q);
+            challengeData.level = challengeData.level.filter((item) => item !== q); // удаляем ключ из массива текущего уровня
             console.log(challengeData.level);
           }          
         } else {
-          challengeData[`${q}`] = 1;
+          challengeData[`${q}`] = 1;                                                  // если ключ отсутствует в объекте, добавляем
         }  
-        challengeData.points++;      
-        myModuleView.showCorrectOrFalse(true);
+        challengeData.points++;                                                       //  прибавляем очки
+        myModuleView.showCorrectOrFalse(true);                                        // показываем результат
         myModuleView.makeBtnGreen(inner);
+        myModuleView.updateChallengeScore(challengeData.levelNum,challengeData.points);
       } else {         
-        if (challengeData.lives > 0) {
-          challengeData.lives--;
+        if (challengeData.lives > 0) {                                                // если жизни закончились, game over
+          challengeData.lives--;                                                      // если ответ неверный, то минус одна жизнь 
           myModuleView.showCorrectOrFalse(false);
           myModuleView.deleteOneLive();
         } else {
@@ -759,49 +888,50 @@
           myModuleView.challengeOver();
           myModuleView.disableBtns();
           isChallengeStarted = false;
+          this.updateChallengeInfo();  
+          challengeData.curQuestion = '';       
         }        
       }
       console.log(challengeData);  
       console.log(challengeIndex); 
       console.log(challengeData.level.length); 
-      let maxAttempts = challengeData.level.length*4 + 4; // max answer attempts  
-      if (challengeData.level.length > 0 && challengeIndex < maxAttempts) {
-        challengeData.curQuestion = this.setNextChallengeQuestion(challengeData.level);
-        this.playMorse(false,true);
+      // let maxAttempts = challengeData.level.length*4 + 4; // max answer attempts  
+      if (challengeData.level.length > 0) {
+        if (isChallengeStarted) this.nextChallengeQuestion();
         challengeIndex++;
       } else {
-        myModuleView.challengeOver();
-        myModuleView.disableBtns();
-        isChallengeStarted = false;
-        challengeIndex = 0;
-        if (challengeData.level.length == 0) {
-          challengeData.challengeLevel++;
-          challengeData.levelsComplited.lastComplited++;
-          let levelComplited = challengeData.sample.map(x => x);
-          challengeData.levelsComplited.levels.push(levelComplited);
-        }
-        
-        this.addChallengeInfo();
-        // debugger;
-      }
-      
+        if (challengeData.lives > 0) { 
+          this.saveComplitedLevel();     
+          this.setNextChallengeLevel();
+          this.nextChallengeQuestion();
+          myModuleView.updateChallengeScore(challengeData.levelNum,challengeData.points);
+        } else {
+          this.saveComplitedLevel();         
+          challengeIndex = 0;
+          isChallengeStarted = false;
+          myModuleView.challengeOver();
+          myModuleView.disableBtns();
+          this.updateChallengeInfo();
+          challengeData.curQuestion = '';
+        } 
+      }      
     }; 
-    this.stopChallenge = () => {
-      myModuleView.challengeOver();
-      isChallengeStarted = false;
+
+    this.saveComplitedLevel = () => {
+      challengeData.levelNum++;
+      let levelComplited = challengeData.sample.map(x => x);
+      challengeData.levelsComplited.levels.push(levelComplited);
+      challengeData.levelsComplited.lastComplited++;
+      console.log(challengeData.levelsComplited.lastComplited);
     }
 
-    this.addChallengeInfo = () => {
-      myDB.ref('challenge/' + `user_${loggedUser.name.toLowerCase()}`).set({
-        score: `${challengeData.points}`,
-        username:`${loggedUser.name}`,
-        data: challengeData,
-      })      
-      .catch(function (error) {
-        console.error("Ошибка добавления информации: ", error);
-      }); 
+    this.stopChallenge = () => {
+      this.updateChallengeInfo();
+      myModuleView.challengeOver();
+      isChallengeStarted = false;
     }
 
     
 
   }
+

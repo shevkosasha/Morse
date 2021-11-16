@@ -9,9 +9,46 @@ const HomePage = {
         <h1>About Morse Code</h1>
       </div>
       <div class="content">
-        <h1>It's the best code ever</h1>
+        
         <img src="https://placehold.it/700x250" alt="" class="" />
-        <p>Morse code is a method of communication that uses short tones (dits) and long tones (dahs) in various sequences to make letters, numbers, and special characters. This tool will help beginners learn Morse code.</p>
+        
+        <div id="info">
+          <h1>Morse Code</h1>
+          <p>Morse code is a method of communication that uses short tones (dits) and long tones (dahs) in various sequences to make letters, numbers, and special characters. 
+          This tool will help beginners learn Morse code.</p>
+          <h2>Dits and Dahs</h2>
+          <p><span class="bold">Dit</span> (<span class="ditdah">.</span>) Short tones and the base unit length of Morse code communication.<br>
+          <span class="bold">Dah</span> (<span class="ditdah">-</span>) Long tones, each the length of three dits.</p>
+          <h2>Spacing</h2>
+          <p>The spacing between dits and dahs matters in Morse code. Spacing of various lengths signify different things.<br>
+          <span class="bold">Intra-character Spacing</span> 
+          A letter in Morse code can be made up of multiple dits and dahs. The spaces between the dits and dahs that make up a single letter are each the length of one dit.
+           E.g., three dits, each separated by one-dit-long spaces, is an "S".<br>
+           <span class="bold">Inter-character Spacing</span> The space between consecutive letters is three dits long. 
+           E.g., three dits, each separated by a three-dit-long spaces is "EEE". (<span class="ditdah">. . .</span>)
+           <br>
+           <span class="bold">Inter-word Spacing</span> The space between words is seven dits long. 
+           E.g., three dits, each separated by seven-dit-long spaces (denoted by a forward slash in this example: <span class="ditdah">././.</span>), is "E E E". 
+           </p>
+           <h2>Page Description </h2>
+           <h3>Explore page </h3>
+           <p>On Explore page you can try to click on a button to hear the code according to the letter on this button. Also you can try encode and decode any character.
+           Also you can try to tap Morse code into textareas by clicking TAP button. Available in English and Russian languages.</p>
+
+           <h3>Practice page </h3>
+           <p>There is a quiz which may help you to learn a Morse code. Available in English and Russian languages. Also you can choose writing or audio context and easy. medium or hard level.
+           Choosing writing context you shoold choose a right code for a quessed character or word. Choosing audio context you shoold listen to the cose and choose a right character or word for it.
+           </p>
+
+           <h3>Challenge page </h3>
+           <p>There is a challenge which has 6 levels. Every new level contains 6 new characters including characters of previous levels. 
+           If you choose a right character this character become more green. Level will be completed when you give 4 right answers for each character.
+           If you give 5 wrong answers challenge is over.</p>
+
+           <h3>Information page </h3>
+           <p>There is a short info about users and top 10 quiz and challenge results</p>
+           
+           </div>
       </div>
       </section>
     `;
@@ -170,7 +207,7 @@ const Practice = {
                 </div>
               </div>
 
-              <h2>Choose quiz level & count of questions</h2>
+              <h2>Choose quiz level</h2>
               <div class="form_toggle levels">                
                 <div class="form_toggle-item easy level">
                   <input id="fid-level1" type="radio" name="level" value="easy" checked>
@@ -385,8 +422,7 @@ const Challenge = {
 
                 <div class="btn-container">
                   <a href="" class="gradient-button start-challenge" id="start_challenge">Start challenge</a>  
-                  <a href="" class="gradient-button stop-challenge unvisible disabled" id="stop_challenge">Stop challenge</a> 
-                  <a href="" class="gradient-button next-level-challenge unvisible disabled" id="next_level_challenge">Next level</a>                 
+                  <a href="" class="gradient-button stop-challenge disabled" id="stop_challenge">Stop challenge</a>                 
                 </div>  
                 <h4 id="caption_challenge">
                   In this game you should listen the code Morse. When a sound of a character is played, click on which character you think it is.
@@ -401,14 +437,24 @@ const Challenge = {
                       <div id="play_question"><img src="./img/noise.svg" alt="play" class = "img_play play-question"></div>
                   </div>
                   <div id="challenge_lives" class="unvisible">
-                    <div class="lives unvisible">
+                    <div class="current-info">
+                      <div class="current-level">
+                        <span class="">Level: </span>
+                        <span class="current-level-info"></span>	                      
+                      </div>
+                      <div class="current-score">
+                        <span class="">Score: </span>
+                        <span class="current-score-info">0</span>	                      
+                      </div>
+                    </div>
+                    <div class="lives ">
                       <span class="active"></span>	
                       <span class="active"></span>    
                       <span class="active"></span>  
                       <span class="active"></span>    
                       <span class="active"></span>
                     </div>
-                    <div class="current-result unvisible">                         
+                    <div class="current-result ">                         
                       <!--<span></span>-->
                     </div>
                   </div>

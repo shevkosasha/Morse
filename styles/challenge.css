@@ -65,11 +65,22 @@
 
   #challenge_lives {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     margin: auto;
     /* margin: 50px; */
     margin-top: 40px;
   }
+  #challenge_lives.unvisible {
+    display: none;
+  }
+
+  #challenge_lives .current-info {
+    width: 50%;   
+    margin-left: 30px;  
+    /* margin-right: 50px; */
+  }
+
+
   .current-result {
     margin-left: 50px;
   }
