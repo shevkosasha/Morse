@@ -41,7 +41,7 @@
 
 .game-options-container{
   width: 80%;
-  height: 12rem;
+  /* height: 12rem; */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -51,6 +51,7 @@
 .game-options-container span{
   width: 45%;
   height: 3rem;
+  margin: 5px 0;
   border: 2px solid darkgray;
   border-radius: 20px;
   overflow: hidden;
@@ -146,9 +147,10 @@ input[type="radio"] {
 
 .next-button-container{
   width: 50%;
-  height: 3rem;
+  /* height: 3rem; */
   display: flex;
   justify-content: center;
+  margin: 10px 0 20px;
 }
 .next-button-container button{
   width: 8rem;
@@ -185,11 +187,13 @@ input[type="radio"] {
 .modal-content-container{
   /* height: 40rem; */
   width: 90%;
+  min-width: 350px;
   background-color: #fefefe;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: space-around; */
+  margin-bottom: 30px;
+  /* justify-content: center; */
   border-radius: 25px;
 }
 
@@ -223,7 +227,7 @@ input[type="radio"] {
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  background: #90b5d6;
+  /* background: #90b5d6; */
 }
 
 .modal-button-container button{
@@ -232,7 +236,7 @@ input[type="radio"] {
   background: none;
   outline: none;
   border: 1px solid rgb(252, 242, 241);
-  background-color:blanchedalmond;
+  background-color:#90b5d6;;
   color: black;
   font-size: 1.1rem;
   cursor: pointer;
@@ -246,6 +250,7 @@ input[type="radio"] {
 
 .togglers, .form_toggle {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   overflow: hidden;
   margin: auto;
@@ -270,7 +275,7 @@ input[type="radio"] {
 }
 
 .form_toggle input{
-  width:70px;
+  /* width:70px; */
   margin-left: 20px;
 }
  
@@ -363,7 +368,7 @@ input[type="radio"] {
   }
   .modal-content-container{
       width: 90%;
-      height: 25rem;
+      /* height: 25rem; */
   }
   .modal-content-container h1{
       font-size: 1.2rem;

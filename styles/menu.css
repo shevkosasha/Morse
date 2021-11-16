@@ -18,23 +18,24 @@ h1{
   position: relative;
   z-index: 0;
   padding: 10px;
-  max-width: 75%;
+  /* max-width: 75%; */
   margin: auto;
   /* margin-left: 250 px; */
-  overflow: hidden;
+  /* overflow: hidden; */
   transition: all 300ms ease-in-out;
 }
 
 .site-title {
   text-align: center;
   border-bottom: 1px solid #111111;
-  margin-bottom: 24px;
 }
 
 .site-title h1 {
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 10px;
+  color: #293241;
+  font-weight: 700;
 }
 
 img {

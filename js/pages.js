@@ -318,8 +318,7 @@ const Practice = {
               </div>
 
               <div class="next-button-container">
-                <!--<button class='check-button'">Check Answer</button>-->
-                <span>&nbsp;&nbsp;&nbsp;</spam>
+               
                 <button class='next-button'">Next Question</button>
               </div>
   `,

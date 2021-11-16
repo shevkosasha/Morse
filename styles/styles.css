@@ -7,16 +7,21 @@
 } */
 
 #content{
-  width: 70%;
+  max-width: 800px;
   margin: auto;
 }
 
 #users-list__container,
 #quiz-results_container,
 #challenge-results_container {
-  width:70%;
+ max-width: 800px;
  justify-content: center;
  margin: auto;
+ padding: 0 10px;
+}
+
+#info {
+  padding: 0 10px;
 }
 
 .table {
@@ -41,7 +46,7 @@
 	text-align: left;
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
-	padding: 10px 15px;
+	padding: 10px;
 	font-size: 14px;
 	vertical-align: top;
   width: max-content;
