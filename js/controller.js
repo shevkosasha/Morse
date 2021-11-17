@@ -42,12 +42,6 @@ function ModuleController (){
         myModuleModel.handleMorseTapStart();
       }
     });
-
-    // window.addEventListener('mouseout',(e) => {
-    //   if (e.target.id === 'morse_button'){
-    //     myModuleModel.handleMorseTapEnd();
-    //   }
-    // });
     
     window.addEventListener('mouseup',(e) => {
       if (e.target.id === 'morse_button'){
@@ -55,13 +49,8 @@ function ModuleController (){
       }
     });
     
-    
-
-
-    
     /*myModuleContainer.querySelector('.content')*/
     window.addEventListener('click', (e) => {
-      // console.log(e.target);
 
       /////*****   EXPLORE PAGE LISTENERS *****/////
       if (e.target.classList.contains('alphabet-button') || 

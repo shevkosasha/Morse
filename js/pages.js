@@ -14,8 +14,8 @@ const HomePage = {
         
         <div id="info">
           <h1>Morse Code</h1>
-          <p>Morse code is a method of communication that uses short tones (dits) and long tones (dahs) in various sequences to make letters, numbers, and special characters. 
-          This tool will help beginners learn Morse code.</p>
+          <p>Morse Code, either of two systems for representing letters of the alphabet, numerals, and punctuation marks by an arrangement of dots, dashes, and spaces. 
+          The codes are transmitted as electrical pulses of varied lengths or analogous mechanical or visual signals, such as flashing lights.</p>
           <h2>Dits and Dahs</h2>
           <p><span class="bold">Dit</span> (<span class="ditdah">.</span>) Short tones and the base unit length of Morse code communication.<br>
           <span class="bold">Dah</span> (<span class="ditdah">-</span>) Long tones, each the length of three dits.</p>
@@ -409,7 +409,7 @@ const Info = {
       <section class="${className}">
         <h1>Information</h1>
         <h2 class="warning-info" style="color:red">Please log in to see info on this page</h2>
-        <div id="users-list__container">
+        <!--<div id="users-list__container">
           <div class="columns">
             <div class="column">
                 <div id="users_list">
@@ -428,7 +428,7 @@ const Info = {
                   </table>
                   
                   <div id="add_user" class="add-user">
-                    <!--<a href='#' class="add-user-btn" title="Add user"> Add user </a> --> 
+                    
                     <a href="#" class="add-user-btn-form" title="Add user"> Add user </a>
                      <input id="add_user-name"type="text" placeholder="name"/>
                      <input id="add_user-email" type="text" placeholder="email address"/>                 
@@ -436,7 +436,7 @@ const Info = {
                 </div>
             </div>
         </div>
-      </div>
+      </div>-->
 
 
       <div id="quiz-results_container">

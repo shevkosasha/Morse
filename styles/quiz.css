@@ -188,12 +188,11 @@ input[type="radio"] {
   /* height: 40rem; */
   width: 90%;
   min-width: 350px;
-  background-color: #fefefe;
+  background-color: #90b5d6;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 30px;
-  /* justify-content: center; */
+  margin-bottom: 30px;/
   border-radius: 25px;
 }
 

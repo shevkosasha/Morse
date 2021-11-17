@@ -27,7 +27,7 @@
     let buffer = ''; //буфер для передачи
     let isAudio = true; // флаг для проигрывания кодов Морзе в textarea, ExplorePage
 
-    //объект настроек для передачика Морзе
+    //объект настроек для передатчика Морзе
     let morse = {
         ditMaxTime: 0,
         letterGapMinTime: 0,
@@ -59,89 +59,6 @@
 
     const that = this;
 
-    // this.init = function(view) {
-    //   myModuleView = view;
-    //   loggedUser = this.getUserFromLocalStorage();
-
-    //   console.log(firebase.auth().currentUser);
-    //   if (firebase.auth().currentUser) {return;}
-    //   else {
-    //     firebase.auth().onAuthStateChanged(function(user) {
-    //       if (user) {
-    //         // User is signed in.
-    //         var ref = firebase.database().ref();
-    //         ref.child("users").orderByChild("email").equalTo(`${user.email}`).once("value",snapshot => {
-    //           if (snapshot.exists()){
-    //             const userData = snapshot.val();
-    //             var userDataName = Object.keys(userData);
-    //             var username = currentUserName = userData[userDataName].username;
-    //             myModuleView.sayHi(username); 
-    //             myModuleView.setUserName(username);               
-    //             isPageLoaded = true;
-    //           }
-    //         }).then(() => {
-    //           that.getInfoFromDB();
-    //         });
-    //       } else {
-    //          if (!isPageLoaded) myModuleView.showLoginForm();
-    //       }
-    //     });
-    //   }
-
-    // },
-
-    // this.updateState = (pageName) => {
-    //   page = pageName;
-
-    //   if (isChallengeStarted) {this.stopChallenge();} 
-    //   if (page == 'info') this.getInfoFromDB();
-
-    //   myModuleView.renderContent(pageName); 
-
-    //   if (currentUserName) {
-    //     myModuleView.sayHi(currentUserName);
-    //     myModuleView.setUserName(currentUserName);
-    //   };
-
-    //   // console.log(firebase.auth().currentUser);
-    //   // if (firebase.auth().currentUser) {return;}
-    //   // else {
-    //   //   firebase.auth().onAuthStateChanged(function(user) {
-    //   //     if (user) {
-    //   //       // User is signed in.
-    //   //       var ref = firebase.database().ref();
-    //   //       ref.child("users").orderByChild("email").equalTo(`${user.email}`).once("value",snapshot => {
-    //   //         if (snapshot.exists()){
-    //   //           const userData = snapshot.val();
-    //   //           var userDataName = Object.keys(userData);
-    //   //           var username = currentUserName = userData[userDataName].username;
-    //   //           myModuleView.sayHi(username); 
-    //   //           myModuleView.setUserName(username);               
-    //   //           isPageLoaded = true;
-    //   //         }
-    //   //       });
-    //   //     } else {
-    //   //        if (!isPageLoaded) myModuleView.showLoginForm();
-    //   //     }
-    //   //   });
-    //   // }
-    //   // debugger;
-    //   console.log(page);
-    //   if (page === 'info') this.getInfoFromDB();
-    //   // if (page === 'info') {
-    //   //    if (currentUserName) {
-    //   //      console.log('logged');
-    //   //     this.getUsersList();
-    //   //     this.getQuizInfo();  
-    //   //     this.getChallengeInfo(); 
-    //   //    } else {
-    //   //     myModuleView.hideWarningInfo();
-    //   //    }
-    //   // }
-      
-    // }
-
-
     this.init = function(view) {
       myModuleView = view;  
 
@@ -157,7 +74,6 @@
 
     this.updateState = (pageName) => {
       page = pageName;
-      // myModuleView.renderContent(pageName);
       if (isChallengeStarted) this.stopChallenge();
 
       if (currentUserName) {
@@ -166,7 +82,7 @@
         myModuleView.setUserName(currentUserName);
         if (pageName === 'info') {
           myModuleView.hideWarningInfo();
-          this.getUsersList();
+          // this.getUsersList();
           this.getQuizInfo();  
           this.getChallengeInfo();    
         }
@@ -297,7 +213,7 @@
           console.error("Ошибка добавления пользователя: ", error);
       });
 
-      this.printUsersList();
+      // this.printUsersList();
     },
 
 
@@ -308,32 +224,18 @@
             const userData = snapshot.val();
             var userDataName = Object.keys(userData);
             var username = userData[userDataName].username;
-            console.log(username);
-            // debugger;
             this.view.sayHi(username);
             }
         });
     },
 
-    // this.getInfoFromDB = () => {
-    //   if (page === 'info') {
-    //     if (currentUserName) {
-    //       console.log('logged');
-    //      this.getUsersList();
-    //      this.getQuizInfo();  
-    //      this.getChallengeInfo(); 
-    //     } else {
-    //      myModuleView.hideWarningInfo();
-    //     }
-    //  }
-    // }
+ 
 
     this.getUsersList = function() {
         myDB.ref("users/").once("value")
         .then(function(snapshot) {          
             console.log("Users list:");
             console.log(snapshot.val());
-            // debugger;
             myModuleView.printUser(snapshot.val());
         }).catch(function (error) {
             console.log("Error: " + error.code);
@@ -369,11 +271,9 @@
             var val = quizUsers[key];
             let username = val.username;
             let score = val.score;
-            if(score){
-                list[username] = score;
-            }
+
+            if(score) {list[username] = score;}
           })
-          // console.log(list);
 
           let sortList = (list)=> {
             var sortable = [];
@@ -389,7 +289,6 @@
             }
             return orderedList;
           }
-          // debugger;
           myModuleView.printQuizUsers(sortList(list));
 
         }).catch(function (error) {
@@ -443,14 +342,13 @@
 
         let ordered = sortList(listScores);
         let result = {};
-        console.log(ordered);
-        // debugger;
+
         for (let [key,value] of Object.entries(ordered)) {
           result[key] = {};
           result[key].score = value;
           result[key].level = listLevels[key]
         }
-        // debugger;
+
         myModuleView.printChallengeUsers(result);
       }).catch(function (error) {
           console.log("Error: " + error.code);
@@ -469,11 +367,11 @@
     },
 
     this.addChallengeInfo = () => {
-      myDB.ref('challenge/' + `user_${loggedUser.name.toLowerCase()}`).set({
+      myDB.ref('challenge/' + `user_${currentUserName.toLowerCase()}`).set({
         score: `${challengeData.points}`,
         level: `${challengeData.levelsComplited.lastComplited + 1}`,
         lastComplited: `${challengeData.levelsComplited.lastComplited + 1}`,
-        username:`${loggedUser.name}`,
+        username:`${currentUserName}`,
         data: challengeData,
       })      
       .catch(function (error) {
@@ -483,7 +381,7 @@
 
     this.updateChallengeInfo =() => {
 
-      myDB.ref('challenge/' + `user_${loggedUser.name.toLowerCase()}`).once("value",snapshot => {
+      myDB.ref('challenge/' + `user_${currentUserName.toLowerCase()}`).once("value",snapshot => {
         if (snapshot.exists()) {
           let user = snapshot.val();
           let name = user.username;
@@ -496,7 +394,7 @@
           let scoreToSave = (currentScore > prevScore) ? currentScore : prevScore;
           let levelToSave = (currentLevel > prevLevel) ? currentLevel : prevLevel;
 
-          myDB.ref('challenge/' + `user_${loggedUser.name.toLowerCase()}`).update({
+          myDB.ref('challenge/' + `user_${currentUserName.toLowerCase()}`).update({
             score: `${scoreToSave}`, 
             level: `${levelToSave}`,
             lastComplited: `${challengeData.levelsComplited.lastComplited + 1}`,
@@ -505,7 +403,6 @@
           this.addChallengeInfo();
         }        
       });
-      //   myModuleView.printChallengeUsers(result);
     }
   
 
@@ -520,13 +417,11 @@
 
     this.switchTransfer = (checked) => {
         isTransfer = checked;
-        console.log(isTransfer);
     };
 
     this.setLanguage = (lang) =>{
         curExpLanguage = lang;
         myModuleView.setLanguage(lang);
-        // console.log(loggedUser);
     },
 
     this.codeMorse = function(str,elem){
@@ -547,14 +442,12 @@
 
     this.sendToTArea = (inner, strTArea, codeTArea) => {
         if (isTransfer) {
-          console.log(inner);
-            buffer += ' ' + inner;
+            buffer += inner;
             let code = this.strToMorse(buffer).split(' ').join(' ');
             myModuleView.printMorseOrStr(code,codeTArea);
             myModuleView.printMorseOrStr(buffer,strTArea);
         }
     };
-
 
 
     // Morse functions: play, code to Morse, decode from Morse
@@ -600,9 +493,6 @@
         if (!str) {
           str = this.strToMorse(challengeData.curQuestion) // for challenge
         } 
-        // else {
-        //   str = this.strToMorse(str);
-        // }
         var AudioContext = window.AudioContext || window.webkitAudioContext;
         var ctx = new AudioContext();
         var dot = 1.2 / 15;
@@ -637,8 +527,7 @@
         oscillator.connect(gainNode);
         gainNode.connect(ctx.destination);
         oscillator.start();
-      }      
-      // return false;
+      } 
     },
 
     this.checkGapBetweenInputs = () => {
@@ -650,45 +539,32 @@
     }
 
     this.startCharTimer = () => {
-        morse.charTimer = setInterval(() => {
-            morse.charT += 1;
-        }, 1);
+        morse.charTimer = setInterval(() => {morse.charT += 1;}, 1);
     }
 
-    this.stopCharTimer = () => {
-      // clearInterval(morse.charTimer);
-      // morse.charTimer = 0;
-      // morse.charT = 0;
-    }
-
+    
     this.startGapTimer = () => {
         morse.gapT = 0;
         morse.gapTimer = setInterval(() => {
           morse.gapT += 1;
-
-            // Gap between words
-            if (morse.gapT >= morse.wordGapMaxTime) {
-                morse.buffer += '   ';
-                clearInterval(morse.gapTimer);
-                console.log(morse.buffer);
-                morse.gapTimer = 0;
-                morse.gapT = 0;
-            }
-            else if (morse.gapT >= morse.letterGapMinTime) {
-                morse.buffer += ' ';
-                clearInterval(morse.gapTimer);
-                morse.gapTimer = 0;
-                morse.gapT = 0;
-            }
+          if (morse.gapT >= morse.wordGapMaxTime) {
+              morse.buffer += '   ';
+              clearInterval(morse.gapTimer);
+              morse.gapTimer = 0;
+              morse.gapT = 0;
+          }
+          else if (morse.gapT >= morse.letterGapMinTime) {
+              morse.buffer += ' ';
+              clearInterval(morse.gapTimer);
+              morse.gapTimer = 0;
+              morse.gapT = 0;
+          }
         }, 1);
     }
 
     this.handleMorseTapEnd = (e) => {
       if (morse.isRunning) {
-        // if ((e.target.id !== "morse_button") || (e.repeat)) {return}
-
         morse.isRunning = false;
-        console.log(morse.charT, morse.ditMaxTime);
         if (morse.charT <= morse.ditMaxTime) {          
           morse.buffer += '.';
         } else {
@@ -700,7 +576,7 @@
         morse.charT = 0;
 
         this.startGapTimer();// запуск таймера для определения паузы
-        console.log(morse.buffer);
+
         myModuleView.printMorseOrStr(morse.buffer,'',this.morseToStr(morse.buffer)) // выводим полученный символ
         
         if (o.context.state === 'running') {
@@ -716,19 +592,14 @@
       var AudioContext = window.AudioContext || window.webkitAudioContext;
       var ctx = new AudioContext();      
       context = ctx;
-      // debugger;
       if (morse.isRunning) {return;} 
       else {
           morse.isRunning = true;
-          // if (context.state === 'interrupted') {
-          //   context.resume();
-          // }              
           o = context.createOscillator();
           o.frequency.value = 600;
           o.type = "sine";          
          
           g = context.createGain();
-          // g.gain.exponentialRampToValueAtTime(1, ctx.currentTime);
           g.gain.setValueAtTime(1, ctx.currentTime);
           o.connect(g);
           g.connect(context.destination);
@@ -736,11 +607,8 @@
           this.checkGapBetweenInputs();
           clearInterval(morse.gapTimer);  
           this.startCharTimer();
-      }
-      
+      }      
     }
-
-
     
     // create quiz function
     this.createQuiz = (obj) => {
@@ -749,19 +617,16 @@
       if (!isQuizStarted) {
         isQuizStarted = true;
         this.setQuestions();
-        console.log(sessionQuestions);
         questions = Object.values(sessionQuestions);
         this.getNextQuestion();        
       }     
     }  
 
     this.setQuestions = function(){
-      // debugger;
       let level = userdata.level;
       let lang = userdata.language;
       let context = userdata.context;
-      // count of questions for current quiz according to level
-      // let num = userdata.countQuestions = (level === 'easy') ? 10 : (level === 'medium') ? 15 : 20;
+
       let num = userdata.countQuestions = 10;
 
       let codeArr = [];
@@ -778,11 +643,11 @@
           codeArr = values = (lang === 'eng') ? words : wordsRus;          
           break;        
       }
-      // console.log(codeArr);
+      
       for (let i=0; i < num; i++) {
         let random = codeArr[Math.floor(Math.random() * codeArr.length)]; //get symbol for qeuestion         
-        let correct = Math.floor(Math.random() * 4); //get number of correct answer in option list
-        let itemQ, itemA; //current question and correct answer
+        let correct = Math.floor(Math.random() * 4);                      //get number of correct answer in option list
+        let itemQ, itemA;                                                 //current question and correct answer
        
         switch(level){
           case 'easy':  
@@ -795,25 +660,25 @@
             itemA = (context === 'writing') ? this.strToMorse(random, lang) : random.toUpperCase();
             break;          
         }
-        console.log(itemQ, itemA, correct);
 
         if (sessionQuestions.hasOwnProperty(`Q_${itemQ}`)) {
-            i--; console.log('double i');
+            i--;
         } else {
           sessionQuestions[`Q_${itemQ}`] = {};
           sessionQuestions[`Q_${itemQ}`]['question'] = {question: `${itemQ}`,
-                                                            answer: `${itemA}`, 
-                                                            num: correct};                                                            
+                                                        answer: `${itemA}`, 
+                                                        num: correct};                                                            
           let options = sessionQuestions[`Q_${itemQ}`]['options'] = [];
-          if (level !== 'hard'){ // если уровень не hard, то подбираем рандомно варианты ответов, для уровня вместо вариантов отображается текстАреа
+          // если уровень не hard, то подбираем рандомно варианты ответов, для уровня hard вместо вариантов отображается текстАреа
+          if (level !== 'hard'){ 
             for( let j=0; j < 4; j++) {
               let item = (context === 'writing') ? values[Math.floor(Math.random() * values.length)] :
                                                    letters[Math.floor(Math.random() * letters.length)].toUpperCase();
   
               if (level === 'medium') item = (context === 'writing') ? this.strToMorse(item, lang) : item.toUpperCase();    
+
               if (!options.includes(item) && (item !== itemA)){
                 options[j] = (j == correct) ? itemA : item;
-                // console.log(item);
               } else {
                 j--;
                 console.log('double j');
@@ -821,13 +686,10 @@
             }
           } 
         }
-
       }
-
     }
 
     this.getNextQuestion = () => {
-      // let questions = Object.keys(sessionQuestions);
       if (index < questions.length) {
         let question = questions[index].question;
         let options = questions[index].options; 
@@ -877,7 +739,6 @@
       
       
       if (okAnswer == curAnswer) {
-        console.log('right');
         switch(level){
           case 'easy': playerScore++; break;
           case 'medium': playerScore += 2; break;
@@ -886,7 +747,6 @@
         answers[index].result = true;
         myModuleView.setBackground(elemClass,curAnswer,'ok');        
       } else {
-        console.log('wrong');
         wrongAttempt++;
         answers[index].result = false;
         if (elemClass === 'option') {
@@ -899,6 +759,7 @@
       } 
 
       index++; // прибавляем номер вопроса
+
       // устанавливаем смену вопроса через 2 секунды
       setTimeout(() => {
         myModuleView.fadeOutQForm();
@@ -948,8 +809,7 @@
       }      
     }
 
-    this.setNextChallengeLevel = () => {    
-      // debugger;  
+    this.setNextChallengeLevel = () => {   
       challengeData.level = levels[challengeData.levelNum].concat(challengeData.learned); // объединяем пройденные уровни с текущим
       challengeData.sample = levels[challengeData.levelNum].map((x) => x);
       myModuleView.setButtonsColors(challengeData.level);
@@ -960,7 +820,6 @@
     }
 
     this.checkChallengeAnswer = (inner) => {
-      // debugger; 
       let q = challengeData.curQuestion;
       if (inner.toLowerCase() == challengeData.curQuestion.toLowerCase()) {         //если выбранный вариант правильный
         if (challengeData.currentChars.hasOwnProperty(`${q}`)) {                                 // то проверяем, есть ли такой ключ (символ) в объекте данных челленджа
@@ -969,7 +828,6 @@
             if (!challengeData.learned.includes(q)) challengeData.learned.push(q);  // помещаем его в массив изученных символов
             delete challengeData.currentChars[`${q}`];                                           // а сам ключ символа удаляем из объекта
             challengeData.level = challengeData.level.filter((item) => item !== q); // удаляем ключ из массива текущего уровня
-            console.log(challengeData.level);
           }          
         } else {
           challengeData.currentChars[`${q}`] = 1;                                                  // если ключ отсутствует в объекте, добавляем
@@ -979,11 +837,11 @@
         myModuleView.makeBtnGreen(inner);
         myModuleView.updateChallengeScore(challengeData.levelNum,challengeData.points);
       } else {         
-        if (challengeData.lives > 0) {                                                // если жизни закончились, game over
+        if (challengeData.lives > 0) {
           challengeData.lives--;                                                      // если ответ неверный, то минус одна жизнь 
           myModuleView.showCorrectOrFalse(false);
           myModuleView.deleteOneLive();
-        } else {
+        } else {                                                                      // если жизни закончились, game over
           myModuleView.deleteOneLive();
           myModuleView.challengeOver(challengeData.levelNum, challengeData.points);
           myModuleView.disableBtns();
@@ -993,19 +851,18 @@
         }        
       }
 
-      console.log(challengeData);
-      
-      if (challengeData.level.length > 0) {
+         //проверяем пройден ли весь уровень  
+      if (challengeData.level.length > 0) {                                           //если нет, то генерируем следующий вопрос
         if (isChallengeStarted) this.nextChallengeQuestion();
         challengeIndex++;
       } else {
-        if (challengeData.lives > 0) { 
-          this.saveComplitedLevel();     
+        if (challengeData.lives > 0) {                                                //если уровень пройден, проверяем оставшиеся жизни
+          this.saveComplitedLevel();                                                  // если есть еще жизни, то генерируем следующий уровень
           this.setNextChallengeLevel();
           this.nextChallengeQuestion();
           myModuleView.updateChallengeScore(challengeData.levelNum,challengeData.points);
         } else {
-          this.saveComplitedLevel();         
+          this.saveComplitedLevel();                                                  // иначе заканчиваем челлендж и сохраняем информацию
           challengeIndex = 0;
           isChallengeStarted = false;
           myModuleView.challengeOver(challengeData.levelNum, challengeData.points);
@@ -1024,7 +881,7 @@
       console.log(challengeData.levelsComplited.lastComplited);
     }
 
-    this.stopChallenge = () => {
+    this.stopChallenge = () => { // функция для останова челленджа с сохранением достижений
       if (isChallengeStarted){
         this.updateChallengeInfo();
         myModuleView.challengeOver(challengeData.levelNum, challengeData.points);

@@ -402,33 +402,22 @@ function ModuleView() {
         row.setAttribute('data-id', user);
         td1.innerHTML = `<strong>${userList[user].username}</strong>`;
         td2.innerHTML = `${userList[user].email}`;
-        // td3.innerHTML = `${userList[user].level}`;
-        // td4.innerHTML = `${userList[user].language}`;
         td3.innerHTML = `<a href="#" class="delete-user-btn" title="удалить пользователя"> Delete user </a>`;
         row.appendChild(td1);
         row.appendChild(td2);
         row.appendChild(td3);
-        // row.appendChild(td4);
-        // row.appendChild(td5);
 
         return row;
     }
   }
 
   this.showAddUserForm = (elem) => {
-    // let inner =  ' <a href="#" class="add-user-btn-form" title="Add user"> Add user </a>'
-    //               +' <input id="add_user-name"type="text" placeholder="name"/>'
-    //               + '<input id="add_user-email" type="text" placeholder="email address"/>';
-    // myModuleContainer.querySelector('.add-user').innerHTML = inner;
   }
 
   this.hideAddUserForm = (elem) => {
-    // let inner =  ' <a href="#" "class="add-user-btn" title="Add user"> Add user </a>';
-    // myModuleContainer.querySelector('.add-user').innerHTML = inner;
   }
 
   this.printQuizUsers = (userList) => {
-    // debugger;
     let userListContainer = document.querySelector('.quiz-list');
     userListContainer.innerHTML = '';
     for (let [key,value] of Object.entries(userList)) {
@@ -455,17 +444,11 @@ function ModuleView() {
   },
 
   this.printChallengeUsers = (userList) => {
-    console.log(userList);
-    // debugger;
     let userListContainer = document.querySelector('.challenge-list');
     userListContainer.innerHTML = '';
     for (let [key,value] of Object.entries(userList)) {
       userListContainer.appendChild(createRow(key,value));
     }
-
-    console.log(userList);
-    
-
     function createRow(user, props) {
         let row = document.createElement('tr'),
             td1 = document.createElement('td'),
