@@ -7,7 +7,7 @@ const components = {
 
 const routes = {
   main: HomePage,
-  login: LoginForm,
+  // login: LoginForm,
   explore: Explore,
   practice: Practice,
   info: Info,

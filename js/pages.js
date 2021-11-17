@@ -55,66 +55,6 @@ const HomePage = {
   }
 };
 
-const LoginForm = {
-  id: "Main",
-  title: "Main",
-  render: (className = "container", ...rest) => {
-    return `    
-    <!--<div class="content-container">
-      <section class="forms-section">
-      <h1 class="section-title"></h1>
-      <div class="forms">
-        <div class="form-wrapper is-active">
-          <button type="button" class="switcher switcher-login">
-            Login
-            <span class="underline"></span>
-          </button>
-          <form class="form form-login">
-            <fieldset>
-              <legend>Please, enter your email and password for login.</legend>
-              <div class="input-block">
-                <label for="login-email">E-mail</label>
-                <input id="login-email" type="email" required>
-              </div>
-              <div class="input-block">
-                <label for="login-password">Password</label>
-                <input id="login-password" type="password" required>
-              </div>
-            </fieldset>
-            <button type="submit" class="btn-login">Login</button>
-          </form>
-        </div>
-        <div class="form-wrapper">
-          <button type="button" class="switcher switcher-signup">
-            Sign Up
-            <span class="underline"></span>
-          </button>
-          <form class="form form-signup">
-            <fieldset>
-              <legend>Please, enter your email, password and password confirmation for sign up.</legend>
-              <div class="input-block">
-                <label for="signup-email">E-mail</label>
-                <input id="signup-email" type="email" required>
-              </div>
-              <div class="input-block">
-                <label for="signup-password">Password</label>
-                <input id="signup-password" type="password" required>
-              </div>
-              <div class="input-block">
-                <label for="signup-password-confirm">Confirm password</label>
-                <input id="signup-password-confirm" type="password" required>
-              </div>
-            </fieldset>
-            <button type="submit" class="btn-signup">Continue</button>
-          </form>
-        </div>
-      </div>
-    </section>
-    </div>-->
-    `;
-  }
-};
-
 const Explore = {
   id: "explore",
   title: "Let's explore Morse Code",   
@@ -230,40 +170,40 @@ const Practice = {
               </div>
   `,
   questionPageHard:`  
-  <div class="game-details-container">
-    <h1>Score : <span id="player-score"></span> / <span class="how-many-questions"></span></h1>
-    <h1> Question : <span id="question-number"></span> / <span class="how-many-questions"></span></h1>
-    <!--<h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h2>-->
-    <h2 class="close-btn">&nbsp;&times;&nbsp;</h2> 
-  </div>
-  <h4>Pick a right option for</h4>
-  <div class="game-question-container">
-    <img src="./img/noise.svg" alt="play" class = "img_play question" style ="display: none;">
-    
-    <div><h1 id="display-question"> </h1></div>
-  </div>
+                    <div class="game-details-container">
+                      <h1>Score : <span id="player-score"></span> / <span class="how-many-questions"></span></h1>
+                      <h1> Question : <span id="question-number"></span> / <span class="how-many-questions"></span></h1>
+                      <!--<h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h2>-->
+                      <h2 class="close-btn">&nbsp;&times;&nbsp;</h2> 
+                    </div>
+                    <h4>Pick a right option for</h4>
+                    <div class="game-question-container">
+                      <img src="./img/noise.svg" alt="play" class = "img_play question" style ="display: none;">
+                      
+                      <div><h1 id="display-question"> </h1></div>
+                    </div>
 
-  <div class="game-options-container">
-  <div class="modal-container" id="option-modal">
-    <div class="modal-content-container">
-      <h1>Please Pick An Option</h1>
-      <div class="modal-button-container">
-          <button class="close-checkModal-button">Continue</button>
-      </div>
-    </div>
-  </div>
+                    <div class="game-options-container">
+                    <div class="modal-container" id="option-modal">
+                      <div class="modal-content-container">
+                        <h1>Please Pick An Option</h1>
+                        <div class="modal-button-container">
+                            <button class="close-checkModal-button">Continue</button>
+                        </div>
+                      </div>
+                    </div>
 
                     <div id="answer_quiz"  class="answer-quiz">
                       <h3 class="hard_quiz_caption"></h3>
                       <textarea rows="4" cols="50" name="text" class="answer-text-quiz"></textarea>
                     </div>  
-  </div>
+                  </div>
 
-  <div class="next-button-container">
-    <!--<button class='check-button'">Check Answer</button>-->
-    <span>&nbsp;&nbsp;&nbsp;</spam>
-    <button class='next-button'">Next Question</button>
-  </div>
+                  <div class="next-button-container">
+                    <!--<button class='check-button'">Check Answer</button>-->
+                    <span>&nbsp;&nbsp;&nbsp;</spam>
+                    <button class='next-button'">Next Question</button>
+                  </div>
 `,
   questionPage:`  
               <div class="game-details-container">
@@ -317,8 +257,7 @@ const Practice = {
               </span>
               </div>
 
-              <div class="next-button-container">
-               
+              <div class="next-button-container">               
                 <button class='next-button'">Next Question</button>
               </div>
   `,
@@ -408,17 +347,7 @@ const Challenge = {
     return `
             <div class="content-container">
               <section class="${className}">
-                <!--<div class="form_toggle quiz_language">
-                  <div class="form_toggle-item language latin">
-                    <input id="fid-latin" type="radio" class="lang" name="language" value="eng" checked>
-                    <label for="fid-latin">English</label>
-                  </div>
-                  <div class="form_toggle-item language cyrillic">
-                    <input id="fid-cyrillic" type="radio" class="lang" name="language" value="ru">
-                    <label for="fid-cyrillic">Russian</label>
-                  </div>
-                </div> -->
-
+               
                 <div class="btn-container">
                   <a href="" class="gradient-button start-challenge" id="start_challenge">Start challenge</a>  
                   <a href="" class="gradient-button stop-challenge disabled" id="stop_challenge">Stop challenge</a>                 
@@ -428,14 +357,14 @@ const Challenge = {
                   To complete a level you need to give four correct answer for each character of the current level. If you give 5 wrong answers challenge is over.
                 </h4>              
                 
-                <div id="challenge">
+                <div id="challenge" class="unvisible">
                 
-                  <div id="challenge_question" class="unvisible">
+                  <div id="challenge_question" class="">
                       <h2>Click on the image below to repeat the code guessed</h2>
                       <div id="question" class="unvisible">question</div>
                       <div id="play_question"><img src="./img/noise.svg" alt="play" class = "img_play play-question"></div>
                   </div>
-                  <div id="challenge_lives" class="unvisible">
+                  <div id="challenge_lives" class="">
                     <div class="current-info">
                       <div class="current-level">
                         <span class="">Level: </span>
@@ -453,12 +382,15 @@ const Challenge = {
                       <span class="active"></span>    
                       <span class="active"></span>
                     </div>
-                    <div class="current-result ">                         
-                      <!--<span></span>-->
+                    <div class="current-result "> 
                     </div>
                   </div>
-                  <div id="alphabet_challenge" class="alphabet_challenge unvisible"></div>
+
+                  <div id="alphabet_challenge" class="alphabet_challenge"></div>
+
                 </div> 
+
+                <div id="alphabet_challenge_result" class="unvisible">  </div>
               </section>
             </div>  
                
@@ -469,7 +401,7 @@ const Challenge = {
 
 const Info = {
   id: "info",
-  title: "App Info",
+  title: "Info",
   addUserForm: "",
   render: (className = "container", ...rest) => {
     return `
@@ -494,9 +426,12 @@ const Info = {
                        
                     </tbody>
                   </table>
-                  <!--<a href='#' class="add-user-btn" title="Add user"> Add user </a>-->
+                  
                   <div id="add_user" class="add-user">
-                    <a href='#' class="add-user-btn" title="Add user"> Add user </a>                   
+                    <!--<a href='#' class="add-user-btn" title="Add user"> Add user </a> --> 
+                    <a href="#" class="add-user-btn-form" title="Add user"> Add user </a>
+                     <input id="add_user-name"type="text" placeholder="name"/>
+                     <input id="add_user-email" type="text" placeholder="email address"/>                 
                   </div>
                 </div>
             </div>

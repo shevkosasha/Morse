@@ -52,6 +52,30 @@
   width: max-content;
   height: max-content;
 }
+
+#add_user{
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+#add_user input,
+#add_user a{
+  margin: 10px;  
+}
+
+.table tbody td a,
+a.add-user-btn-form{
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+  color: white;
+  font-size: 14px;
+  background: #334c6c;
+  box-shadow: 0 0 1px rgb(0 0 0 / 0%);
+}
 .table thead tr th:first-child, .table tbody tr td:first-child {
 	border-left: none;
 }
@@ -60,6 +84,10 @@
 }
 .table tbody tr:nth-child(even){
 	background: #f3f3f3;
+}
+.table tbody tr td:last-child {
+	border-right: none;
+  text-align: center;
 }
 
 div.scrollup {

@@ -25,7 +25,7 @@ function ModuleController (){
   },
 
   
-  this.updateState = function(page) {        
+  this.updateState = function(page) { 
     myModuleModel.updateState(page);
   },   
 
@@ -83,10 +83,7 @@ function ModuleController (){
             case 'alphabet-button': 
               morse = e.target.querySelector('.morse').innerHTML; 
               char = e.target.querySelector('.alpha').innerHTML;
-              break;
-            // case 'morse': inner = e.target.parentNode.querySelector('.alpha').innerHTML; break;
-            // case 'alpha': inner = e.target.innerHTML; break;
-            // case 'alphabet-button': inner = e.target.querySelector('.alpha').innerHTML; break;
+              break;            
         }
         myModuleModel.playMorse(morse,checked); 
         myModuleModel.sendToTArea(char, myModuleContainer.querySelector('#code_word'), myModuleContainer.querySelector('#decode_morse'));          
@@ -229,17 +226,10 @@ function ModuleController (){
         myModuleModel.createUser(
             document.querySelector("#signup-name").value,
             document.querySelector("#signup-email").value,
-            document.querySelector("#signup-password").value,  
-            hashPageName       
+            document.querySelector("#signup-password").value, 
+            hashPageName
         );
       }
-
-      // if (e.target.classList.contains('close-login')) {
-      //   // e.preventDefault();
-      //   // e.stopPropagation();
-      //   console.log('log out');
-      //   myModuleModel.logout(); log-out
-      // }
 
       if (e.target.classList.contains('log-in')) {
         console.log('log in');
@@ -288,7 +278,6 @@ function ModuleController (){
 
       
       if (e.target.classList.contains('delete-challenge-user-btn')) {
-        debugger;
         e.preventDefault();
         e.stopPropagation();
         console.log(e.target.parentElement.parentElement.dataset.id);

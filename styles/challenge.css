@@ -67,7 +67,7 @@
     /* margin: 50px; */
     margin-top: 40px;
   }
-  #challenge_lives.unvisible {
+  #challenge.unvisible {
     display: none;
   }
 
@@ -198,6 +198,17 @@
   .right { 
     background-color: rgb(48, 97, 44);
     color:white;
+  }
+
+  #alphabet_challenge_result .over-caption {
+    margin: 30px;
+    text-align: center;
+    color: #293241;
+  }
+
+  #alphabet_challenge_result .over-info {
+    text-align: center;
+    color: #293241;
   }
 
   .disabled {

@@ -6,6 +6,7 @@ function ModuleView() {
   let routesObj = null;
   let language = 'eng';
   let currentUserName;
+  let currentPage;
 
   this.init = function(container, routes) {
     myModuleContainer = container;
@@ -14,9 +15,13 @@ function ModuleView() {
     contentContainer = myModuleContainer.querySelector("#content");
   },
 
-  this.setUserName = (name) => currentUserName = name;
+  this.setUserName = (name) => {
+    currentUserName = name;
+    if (currentPage === 'practice') this.setQuizUserName(name);
+  }
   
   this.renderContent = function(hashPageName) {
+    currentPage = hashPageName;
     let routeName = "default";
     if (hashPageName.length > 0) {
       routeName = hashPageName in routes ? hashPageName : "error";
@@ -25,17 +30,16 @@ function ModuleView() {
     window.document.title = routesObj[routeName].title;
     contentContainer.innerHTML = '';
     contentContainer.innerHTML = routesObj[routeName].render(`${routeName}-page`,contentContainer);
+    // debugger;
     if (routeName === 'explore' || routeName === 'challenge') {
       this.createMorseTable(routeName);        
     }
     if (routeName === 'challenge') this.disableBtns();
 
     if (routeName === 'practice') {
-      // debugger;
      myModuleContainer.querySelector('.game-quiz-container').innerHTML = Practice.startQuizPage;
      myModuleContainer.querySelector('#user_name').value = (currentUserName) ? currentUserName : '';
     }   
-    if (routeName === 'challenge') this.disableBtns();
     
     // this.showLoginForm();
     this.updateButtons(routesObj[routeName].id);
@@ -45,29 +49,40 @@ function ModuleView() {
 
   this.closeLoginForm = () => {
     document.querySelector('.login-page').classList.remove('visible');
+    myModuleContainer.querySelectorAll('.alert').forEach(alert => alert.textContent = '');
+
     let inputs = document.querySelector('.login-page').querySelectorAll('input');
     inputs.forEach(element => {element.value = '';});
   }
 
   this.sayHi = (user) => {
     myModuleContainer.querySelector('.hi-section').textContent = `Hi ${user}`;
-    document.querySelector('.log-in').textContent = 'Log out';
-    document.querySelector('.log-in').classList.replace('log-in','log-out');
+    if (document.querySelector('.log-in')) {
+      document.querySelector('.log-in').textContent = 'Log out';
+      document.querySelector('.log-in').classList.replace('log-in','log-out');
+    }     
   }
 
   this.logOut = () => {
     document.querySelector('.hi-section').textContent = 'Bye';
     document.querySelector('.log-out').textContent = 'Log in';
     document.querySelector('.log-out').classList.replace('log-out','log-in');
+    this.closeLoginForm();
   }
 
   this.logIn = () => {
     document.querySelector('.log-out').classList.replace('log-in','log-out');
   }
 
+  this.showAlert = (msg) => {
+    myModuleContainer.querySelectorAll('.alert').forEach(alert => alert.textContent = msg);
+  }
+
   this.disableBtns = () => {
     myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => { btn.classList.add('disabled')})
   }
+
+  
 
   this.createMorseTable = (routeName = 'explore') => {   
     console.log(routeName);
@@ -90,6 +105,8 @@ function ModuleView() {
   },
 
   this.switchForm = (elem) => {
+    myModuleContainer.querySelectorAll('.alert').forEach(alert => alert.textContent = '');
+
     let forms = document.getElementById('login_forms').querySelectorAll('form');
     forms.forEach(form => {
       if (form.classList.contains('visible')) {
@@ -129,10 +146,19 @@ function ModuleView() {
                                                                                   : '<span style="color: red"> FALSE! </span>';
   },
 
-  this.challengeOver = () => {
-    myModuleContainer.querySelector('.current-result').innerHTML = '<span style="color: red"> Challenge is over! Try again </span>';
-    myModuleContainer.querySelector('.gradient-button').classList.remove('disabled');      
-    myModuleContainer.querySelector('#stop_challenge').classList.add('disabled');
+  this.challengeOver = (levelNum, points) => {
+    // myModuleContainer.querySelector('#alphabet_challenge_result').innerHTML = '<h5 style="color: red"> Challenge is over! Try again </h5>';
+    if (myModuleContainer.querySelector('.challenge-page')) {
+      myModuleContainer.querySelector('.gradient-button').classList.remove('disabled');      
+      myModuleContainer.querySelector('#stop_challenge').classList.add('disabled');
+      myModuleContainer.querySelector('#challenge').classList.add('unvisible');
+      myModuleContainer.querySelector('#caption_challenge').classList.remove('unvisible'); 
+      myModuleContainer.querySelector('#alphabet_challenge_result').classList.remove('unvisible');
+      myModuleContainer.querySelector('#alphabet_challenge_result').innerHTML = ` <h3 class="over-caption"> Challenge is over! But you can try again </h3>
+                                                                              <h4 class="over-info">Complited levels: ${levelNum}</h4> 
+                                                                              <h4 class="over-info">Earned points: ${points} </h4><br>`;
+    }
+
   }
 
   this.deleteOneLive = () => {
@@ -160,7 +186,11 @@ function ModuleView() {
 
   this.setButtonsColors = (level) => {
     myModuleContainer.querySelectorAll('.alphabet-challenge-btn').forEach(btn => { 
-      if (btn.classList.contains('right')) btn.classList.remove('right');
+      // if (btn.classList.contains('right')) 
+      btn.classList.remove('right');
+      btn.classList.remove('right-1');
+      btn.classList.remove('right-2');
+      btn.classList.remove('right-3');
       let x = btn.querySelector('.alpha-challenge').textContent.toLowerCase();
       if (level.includes(x) ) {
         btn.classList.remove('disabled');
@@ -170,18 +200,24 @@ function ModuleView() {
   };
 
 
-  this.startChallenge = (levelNum) => {
+  this.startChallenge = (levelNum, points) => {
        
     myModuleContainer.querySelector('#start_challenge').classList.add('disabled');
     myModuleContainer.querySelector('#stop_challenge').className = 'gradient-button stop-challenge';
-    // myModuleContainer.querySelector('#next_level_challenge').classList.remove('unvisible');
+    myModuleContainer.querySelector('#alphabet_challenge_result').classList.add('unvisible');
     myModuleContainer.querySelector('#caption_challenge').classList.add('unvisible');  //
 
-    myModuleContainer.querySelector('#challenge_question').classList.remove('unvisible');
-    myModuleContainer.querySelector('#challenge_lives').classList.remove('unvisible');
-    myModuleContainer.querySelector('#alphabet_challenge').classList.remove('unvisible');
-
+    let heartSpans = myModuleContainer.querySelector('.lives').querySelectorAll('span');
+    heartSpans.forEach(heart => {
+      if (!heart.classList.contains('active')) heart.classList.add('active')
+    });
+    myModuleContainer.querySelector('.current-result').innerHTML = '';
     myModuleContainer.querySelector('.current-level-info').innerHTML = levelNum;
+    myModuleContainer.querySelector('.current-score-info').innerHTML = points;
+
+    myModuleContainer.querySelector('#challenge').classList.remove('unvisible');
+
+    
     
   }
 
@@ -216,9 +252,6 @@ function ModuleView() {
   }
 
   this.showQuestion = (question, options, index, score, userdata) => {
-   
-    console.log(question);
-    console.log(options);
 
     const fadeIn = () => {
       el = myModuleContainer.querySelector('.game-quiz-container');
@@ -305,9 +338,6 @@ function ModuleView() {
     
     let resultContainer =  myModuleContainer.querySelector('.quiz-finish-list');
 
-    // for (let answer in result.answers) {
-    //   resultContainer.append(createRow());
-    // }
     result.answers.forEach(answer => resultContainer.append(createRow(answer)));
 
     myModuleContainer.querySelector('#score-modal').style.display = 'block';
@@ -341,19 +371,6 @@ function ModuleView() {
     myModuleContainer.querySelector('.game-quiz-container').style.opacity = 1;
   }
   this.showWarning = () => myModuleContainer.querySelector('#username_input').querySelector('h2').classList.add('wrong-name');
-
-  // this.fadeIn = (el) => {
-  //   if (!el) el = myModuleContainer.querySelector('.game-quiz-container');
-  //     el.style.opacity = 0;
-  //     el.style.display = 'flex';
-  //     (function fade() {
-  //         var val = parseFloat(el.style.opacity);
-  //         if (!((val += .1) > 1)) {
-  //             el.style.opacity = val;
-  //             requestAnimationFrame(fade);
-  //         }
-  //     })();
-  // }
 
   this.fadeOutQForm = (el) => {
     if (!el) el = myModuleContainer.querySelector('.game-quiz-container');
@@ -399,15 +416,15 @@ function ModuleView() {
   }
 
   this.showAddUserForm = (elem) => {
-    let inner =  ' <a href="#" class="add-user-btn-form" title="Add user"> Add user </a>'
-                  +' <input id="add_user-name"type="text" placeholder="name"/>'
-                  + '<input id="add_user-email" type="text" placeholder="email address"/>';
-    myModuleContainer.querySelector('.add-user').innerHTML = inner;
+    // let inner =  ' <a href="#" class="add-user-btn-form" title="Add user"> Add user </a>'
+    //               +' <input id="add_user-name"type="text" placeholder="name"/>'
+    //               + '<input id="add_user-email" type="text" placeholder="email address"/>';
+    // myModuleContainer.querySelector('.add-user').innerHTML = inner;
   }
 
   this.hideAddUserForm = (elem) => {
-    let inner =  ' <a href="#" "class="add-user-btn" title="Add user"> Add user </a>';
-    myModuleContainer.querySelector('.add-user').innerHTML = inner;
+    // let inner =  ' <a href="#" "class="add-user-btn" title="Add user"> Add user </a>';
+    // myModuleContainer.querySelector('.add-user').innerHTML = inner;
   }
 
   this.printQuizUsers = (userList) => {

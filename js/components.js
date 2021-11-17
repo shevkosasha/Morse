@@ -15,15 +15,17 @@ const Header = {
         <form class="register-form unvisible">
           <input id="signup-name"type="text" placeholder="name"/>
           <input id="signup-email" type="text" placeholder="email address"/>
-          <input id="signup-password" type="password" placeholder="password"/>          
+          <input id="signup-password" type="password" placeholder="password"/>
           <button class="btn-create-user">create</button>
           <p class="message">Already registered? <a class="switcher" href="#">Sign In</a></p>
+          <span class="alert" style="color: red"></span>
         </form>
         <form class="login-form visible">
           <input id="login-email" type="text" placeholder="useremail"/>
-          <input id="login-password" type="password" placeholder="password"/>
+          <input id="login-password" type="password" placeholder="password"/>          
           <button class="btn-login-user">Login</button>
           <p class="message">Not registered? <a class="switcher" href="#">Create an account</a></p>
+          <span class="alert" style="color: red"></span>
         </form>
       </div>
     </div>  
