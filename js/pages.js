@@ -542,16 +542,7 @@ const Info = {
             </tr>
           </thead>
           <tbody class="challenge-list">
-            <tr>
-              <td>Gloria</td>
-              <td>Reeves@mail.com</td>
-              <td>67439</td>                        
-            </tr>
-            <tr>
-              <td>Graham</td>
-              <td>Bonner</td>
-              <td>Х</td>                       
-            </tr>                  
+              
           </tbody>
             </table>
           </div>

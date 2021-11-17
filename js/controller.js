@@ -67,15 +67,29 @@ function ModuleController (){
       if (e.target.classList.contains('alphabet-button') || 
           e.target.classList.contains('morse') || 
           e.target.classList.contains('alpha')) {
-        let inner;
-        let checked = myModuleContainer.querySelector('.play_checkbox').checked;            
+        let morse;
+        let char;
+        let checked = myModuleContainer.querySelector('.play_checkbox').checked; 
+
         switch (e.target.className) {                        
-            case 'morse': inner = e.target.innerHTML; break;
-            case 'alpha': inner = e.target.parentNode.querySelector('.morse').innerHTML; break;
-            case 'alphabet-button': inner = e.target.querySelector('.morse').innerHTML; break;
+            case 'morse': 
+              morse = e.target.innerHTML; 
+              char = e.target.parentNode.querySelector('.alpha').innerHTML;
+              break;
+            case 'alpha':
+              morse = e.target.parentNode.querySelector('.morse').innerHTML; 
+              char = e.target.innerHTML;
+              break;
+            case 'alphabet-button': 
+              morse = e.target.querySelector('.morse').innerHTML; 
+              char = e.target.querySelector('.alpha').innerHTML;
+              break;
+            // case 'morse': inner = e.target.parentNode.querySelector('.alpha').innerHTML; break;
+            // case 'alpha': inner = e.target.innerHTML; break;
+            // case 'alphabet-button': inner = e.target.querySelector('.alpha').innerHTML; break;
         }
-        myModuleModel.playMorse(inner,checked); 
-        myModuleModel.sendToTArea(inner,myModuleContainer.querySelector('#code_word'), myModuleContainer.querySelector('#decode_morse'));          
+        myModuleModel.playMorse(morse,checked); 
+        myModuleModel.sendToTArea(char, myModuleContainer.querySelector('#code_word'), myModuleContainer.querySelector('#decode_morse'));          
       }
       // clear button handler
       if (e.target.classList.contains('clear')) {

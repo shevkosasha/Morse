@@ -1,12 +1,10 @@
-// Список компонент (from components.js)
+
 const components = {
   header: Header,
   navbar: NavBar,
   content: Content,
-  // footer: Footer,
 };
 
-// Список поддердживаемых роутов (from pages.js)
 const routes = {
   main: HomePage,
   login: LoginForm,

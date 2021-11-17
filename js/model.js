@@ -3,7 +3,7 @@
   function ModuleModel () {
 
     let myModuleView = null;
-    let loggedUser = null;
+    let loggedUser = {};
     let page = null;
     //переменные для квиза
     let isQuizStarted = false;
@@ -447,11 +447,13 @@
         myModuleView.clearInput(tArea1, tArea2);
     };    
 
-    this.sendToTArea = (inner,strTArea,codeTArea) => {
+    this.sendToTArea = (inner, strTArea, codeTArea) => {
         if (isTransfer) {
+          console.log(inner);
             buffer += ' ' + inner;
-            myModuleView.printMorseOrStr(buffer,codeTArea);
-            myModuleView.printMorseOrStr(this.morseToStr(buffer),strTArea);
+            let code = this.strToMorse(buffer).split(' ').join(' ');
+            myModuleView.printMorseOrStr(code,codeTArea);
+            myModuleView.printMorseOrStr(buffer,strTArea);
         }
     };
 
@@ -497,7 +499,12 @@
     this.playMorse = function(str,on){
       if (!on) on = isAudio;
       if (on){
-        if (!str) str = this.strToMorse(challengeData.curQuestion); // for challenge
+        if (!str) {
+          str = this.strToMorse(challengeData.curQuestion) // for challenge
+        } 
+        // else {
+        //   str = this.strToMorse(str);
+        // }
         var AudioContext = window.AudioContext || window.webkitAudioContext;
         var ctx = new AudioContext();
         var dot = 1.2 / 15;
@@ -892,10 +899,7 @@
           challengeData.curQuestion = '';       
         }        
       }
-      console.log(challengeData);  
-      console.log(challengeIndex); 
-      console.log(challengeData.level.length); 
-      // let maxAttempts = challengeData.level.length*4 + 4; // max answer attempts  
+      
       if (challengeData.level.length > 0) {
         if (isChallengeStarted) this.nextChallengeQuestion();
         challengeIndex++;
@@ -912,7 +916,7 @@
           myModuleView.challengeOver();
           myModuleView.disableBtns();
           this.updateChallengeInfo();
-          challengeData.curQuestion = '';
+          challengeData.curQuestion = '';          
         } 
       }      
     }; 
