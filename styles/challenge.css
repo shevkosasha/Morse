@@ -19,19 +19,16 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     background: white;
-    /* background-image: linear-gradient(to right, white 0%, #b2acdd 51%, #9EEFE1 100%); */
     background-size: 200% auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, .1);
     transition: .5s;
   }
   .gradient-button:hover {
-    /* background-position: right center; */
     background: rgb(202, 201, 201);
     color: white;
   }
 
   .gradient-button:active {
-    /* background-position: right center; */
     background: rgb(202, 201, 201);
     color: white;
     -webkit-transform: translateY(3px);
@@ -64,7 +61,6 @@
     display: flex;
     justify-content: start;
     margin: auto;
-    /* margin: 50px; */
     margin-top: 40px;
   }
   #challenge.unvisible {
@@ -74,8 +70,6 @@
   #challenge_lives .current-info {
     width: 50%;   
     text-align: right;
-    /* margin-left: 30px;   */
-    /* margin-right: 50px; */
   }
 
   .current-level,
@@ -87,9 +81,6 @@
     margin-left: 50px;
   }
 
-  /* #challenge_question{
-      display: none;
-  } */
   #play_question {
     display: flex;
     justify-content: center;
@@ -188,7 +179,6 @@
   .right-2{
     background: rgb(10,93,4);
     background: linear-gradient(90deg, rgb(48, 97, 44) 0%, rgb(118, 156, 117) 50%, rgba(232,233,233,1) 100%);
-    /* color: white; */
   }
   .right-3{
     background: rgb(10,93,4);

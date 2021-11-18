@@ -212,7 +212,6 @@ input[type="radio"] {
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  /* background: #90b5d6; */
 }
 
 .modal-button-container button{
@@ -240,10 +239,8 @@ input[type="radio"] {
   overflow: hidden;
   margin: auto;
 }
-.form_toggle-item h2{
- 
-}
-/* .form_toggle-item input[type=checkbox] */
+
+
 .form_toggle-item input[type=radio]
 {
   display: none;
@@ -260,7 +257,6 @@ input[type="radio"] {
 }
 
 .form_toggle input{
-  /* width:70px; */
   margin-left: 20px;
 }
  
@@ -353,7 +349,6 @@ input[type="radio"] {
   }
   .modal-content-container{
       width: 90%;
-      /* height: 25rem; */
   }
   .modal-content-container h1{
       font-size: 1.2rem;

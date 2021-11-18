@@ -96,9 +96,8 @@ function ModuleView() {
                                   btn.classList.add('alphabet-challenge-btn');
       btn.innerHTML = (routeName === 'explore') ? 
                       `<span class ="alpha">${symbol.toUpperCase()}</span> <span class ="morse">${code}</span>` :
-                      `<span class ="alpha-challenge">${symbol.toUpperCase()}</span>`;    
-      // debugger;                              
-      div.append(btn);
+                      `<span class ="alpha-challenge">${symbol.toUpperCase()}</span>`;  
+      if (div) div.append(btn);
     }
   },
 
@@ -121,7 +120,7 @@ function ModuleView() {
     if (myModuleContainer.querySelector('#current_language')) {        
       myModuleContainer.querySelector('#current_language').textContent = (language === 'eng') ? 'English' : 'Russian';
       this.createMorseTable();
-    } else {
+    } else  {
       this.createMorseTable('challenge');
     }
     
