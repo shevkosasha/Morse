@@ -14,11 +14,22 @@ const HomePage = {
         
         <div id="info">
           <h1>Morse Code</h1>
-          <p>Morse Code, either of two systems for representing letters of the alphabet, numerals, and punctuation marks by an arrangement of dots, dashes, and spaces. 
-          The codes are transmitted as electrical pulses of varied lengths or analogous mechanical or visual signals, such as flashing lights.</p>
+          <p>Morse code is a method used in telecommunication to encode text characters as standardized sequences of two different signal durations, 
+          called dots and dashes, or dits and dahs.
+           Morse code is named after Samuel Morse, one of the inventors of the telegraph.</p>
+           <p>International Morse Code encodes the 26 Latin letters a through z, one non-Latin letter, the Arabic numerals, and a small set of punctuation and procedural signals (prosigns). 
+           There is no distinction between upper and lower case letters. </p>
+          
           <h2>Dits and Dahs</h2>
-          <p><span class="bold">Dit</span> (<span class="ditdah">.</span>) Short tones and the base unit length of Morse code communication.<br>
-          <span class="bold">Dah</span> (<span class="ditdah">-</span>) Long tones, each the length of three dits.</p>
+          <p>
+          Each Morse code symbol is formed by a sequence of dits and dahs. 
+          The dit duration is the basic unit of time measurement in Morse code transmission. 
+          The duration of a dah is three times the duration of a dit. Each dit or dah within an encoded character is followed by a period of signal 
+          absence, called a space, equal to the dit duration. The letters of a word are separated by a space of duration equal to three dits, 
+          and words are separated by a space equal to seven dits
+          </p>
+          <p><b>Dit</b> (.) Short tones and the base unit length of Morse code communication.<br>
+          <b>Dah</b> (-) Long tones, each the length of three dits.</p>
           <h2>Spacing</h2>
           <p>The spacing between dits and dahs matters in Morse code. Spacing of various lengths signify different things.<br>
           <span class="bold">Intra-character Spacing</span> 

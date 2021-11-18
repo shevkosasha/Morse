@@ -41,7 +41,6 @@ function ModuleView() {
      myModuleContainer.querySelector('#user_name').value = (currentUserName) ? currentUserName : '';
     }   
     
-    // this.showLoginForm();
     this.updateButtons(routesObj[routeName].id);
   },
 
@@ -84,8 +83,7 @@ function ModuleView() {
 
   
 
-  this.createMorseTable = (routeName = 'explore') => {   
-    console.log(routeName);
+  this.createMorseTable = (routeName = 'explore') => { 
     let arr = (language == 'eng') ? morseCode : morseCodeRus;
     let div = (routeName === 'explore') ? myModuleContainer.querySelector('.alphabet') :
                                           myModuleContainer.querySelector('.alphabet_challenge');

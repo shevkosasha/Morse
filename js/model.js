@@ -74,12 +74,18 @@
 
     this.updateState = (pageName) => {
       page = pageName;
+      
       if (isChallengeStarted) this.stopChallenge();
 
       if (currentUserName) {
         myModuleView.renderContent(pageName)
         myModuleView.sayHi(currentUserName);
         myModuleView.setUserName(currentUserName);
+
+        // if (pageName === 'explore') {
+        //   this.setLanguage(curExpLanguage);
+        // }
+        
         if (pageName === 'info') {
           myModuleView.hideWarningInfo();
           // this.getUsersList();
@@ -628,7 +634,7 @@
       let context = userdata.context;
 
       let num = userdata.countQuestions = 10;
-
+     
       let codeArr = [];
       let values = [];
       let letters = [];
@@ -640,7 +646,7 @@
           break;
         case 'medium':
         case "hard":
-          codeArr = values = (lang === 'eng') ? words : wordsRus;          
+          codeArr = values = letters = (lang === 'eng') ? words : wordsRus;          
           break;        
       }
       
@@ -672,7 +678,7 @@
           // если уровень не hard, то подбираем рандомно варианты ответов, для уровня hard вместо вариантов отображается текстАреа
           if (level !== 'hard'){ 
             for( let j=0; j < 4; j++) {
-              let item = (context === 'writing') ? values[Math.floor(Math.random() * values.length)] :
+                let item = (context === 'writing') ? values[Math.floor(Math.random() * values.length)] :
                                                    letters[Math.floor(Math.random() * letters.length)].toUpperCase();
   
               if (level === 'medium') item = (context === 'writing') ? this.strToMorse(item, lang) : item.toUpperCase();    
@@ -681,7 +687,6 @@
                 options[j] = (j == correct) ? itemA : item;
               } else {
                 j--;
-                console.log('double j');
               }        
             }
           } 

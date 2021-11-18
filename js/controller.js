@@ -27,11 +27,12 @@ function ModuleController (){
   
   this.updateState = function(page) { 
     myModuleModel.updateState(page);
+    if (page === 'explore') {
+      myModuleModel.setLanguage('eng');
+    }
   },   
 
   this.addListeners = function(){
-
-    // if (page === 'results') myModuleModel.printUsersList(); 
 
     let toTopBtn = myModuleContainer.querySelector('.scrollup');
     window.addEventListener('scroll', (e) => myModuleModel.showToTopBtn()) ;    
@@ -49,7 +50,7 @@ function ModuleController (){
       }
     });
     
-    /*myModuleContainer.querySelector('.content')*/
+    
     window.addEventListener('click', (e) => {
 
       /////*****   EXPLORE PAGE LISTENERS *****/////

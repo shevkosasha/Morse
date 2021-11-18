@@ -41,7 +41,6 @@
 
 .game-options-container{
   width: 80%;
-  /* height: 12rem; */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -95,16 +94,12 @@ span img {
 span label{
   position: relative;
   width: 70%;
-  /* height: 100%; */
-  /* display: flex; */
-  /* align-items: center; */
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
   transition: transform 0.3s;
   font-weight: 600;
   color: rgb(44, 43, 43);
-  /* opacity: 0.5; */
 }
 
 .game-question-container img:hover,
@@ -119,7 +114,6 @@ span img:hover{
 #answer_quiz{
   width: 100%;
   justify-content: center;
-  /* margin-left: 10px; */
 }
 #answer_quiz textarea{
   position: relative;
@@ -136,9 +130,6 @@ input[type="radio"] {
 }
 
 
-/* input[type=radio]:checked .option {
-  background: paleturquoise;
-} */
 
 .selected {
   background: paleturquoise;
@@ -147,7 +138,6 @@ input[type="radio"] {
 
 .next-button-container{
   width: 50%;
-  /* height: 3rem; */
   display: flex;
   justify-content: center;
   margin: 10px 0 20px;
@@ -174,9 +164,6 @@ input[type="radio"] {
   left: 0;
   top: 30px;
   width: 100%; 
-  /* height: 95%;  */
-  /* overflow: auto;  */
-  /* background-color: gray;  */
   flex-direction: column;
   align-items: center;
   justify-content: center; 
@@ -185,7 +172,6 @@ input[type="radio"] {
 }
 
 .modal-content-container{
-  /* height: 40rem; */
   width: 90%;
   min-width: 350px;
   background-color: #90b5d6;
@@ -390,11 +376,11 @@ input[type="radio"] {
   background-color:crimson;
 }
 .ok {
-  background-color:darkgreen;
+  background-color:rgb(6, 196, 6);
 }
 
 .wrong_answer {
-  color:crimson;
+  color:#e95834;
 }
 .ok_answer {
   color:darkgreen;
