@@ -296,8 +296,7 @@
             return orderedList;
           }
 
-          // console.log(list);
-          // console.log(sortList(list));
+          
           myModuleView.printQuizUsers(sortList(list));
 
         }).catch(function (error) {
@@ -331,8 +330,7 @@
           if(score) listScores[username] = +score;
           if(level) listLevels[username] = +level;
         })
-        // console.log(listScores);
-        // console.log(listLevels);
+        
 
         let sortList = (list)=> {
           var sortable = [];
