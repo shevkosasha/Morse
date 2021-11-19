@@ -287,7 +287,7 @@
                 sortable.push([key, list[key]]);
             }        
             sortable.sort(function(a, b) {
-                return (a[1] > b[1] ? -1 : (a[1] > b[1] ? 1 : 0));
+                return b[1] - a[1];
             });        
             var orderedList = {};
             for (var idx in sortable) {
@@ -295,6 +295,9 @@
             }
             return orderedList;
           }
+
+          // console.log(list);
+          // console.log(sortList(list));
           myModuleView.printQuizUsers(sortList(list));
 
         }).catch(function (error) {
@@ -328,8 +331,8 @@
           if(score) listScores[username] = +score;
           if(level) listLevels[username] = +level;
         })
-        console.log(listScores);
-        console.log(listLevels);
+        // console.log(listScores);
+        // console.log(listLevels);
 
         let sortList = (list)=> {
           var sortable = [];
@@ -337,7 +340,7 @@
               sortable.push([key, list[key]]);
           }        
           sortable.sort(function(a, b) {
-              return (a[1] > b[1] ? -1 : (a[1] > b[1] ? 1 : 0));
+            return b[1] - a[1];
           });        
           var orderedList = {};
           for (var idx in sortable) {
