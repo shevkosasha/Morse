@@ -147,7 +147,7 @@
                   const currentUser = {}; // создаем объект для авторизованного пользователя
                   currentUser.name = username;
                   currentUser.email = userEmail;
-                  currentUser.pass = userPass;
+                  // currentUser.pass = userPass;
                   // // console.log (JSON.stringify(currentUser));
                   localStorage.setItem(`user_${username.toLowerCase()}`,JSON.stringify(userData));
                   localStorage.setItem('morse_current_user',JSON.stringify(currentUser)); // сохраняем авторизованного пользователя в localStorage
@@ -509,7 +509,7 @@
         var oscillator = ctx.createOscillator();
         oscillator.type = "sine";
         oscillator.frequency.value = 600;
-
+        //нужно создать узел усилителя внутри контекста, присоединить его к цепи, и присоединить усилитель к назначению
         var gainNode = ctx.createGain();
         gainNode.gain.setValueAtTime(0, t);
         str.split("").forEach((letter) => {
@@ -605,8 +605,8 @@
           o = context.createOscillator();
           o.frequency.value = 600;
           o.type = "sine";          
-         
-          g = context.createGain();
+          //нужно создать узел усилителя внутри контекста, присоединить его к цепи, и присоединить усилитель к назначению
+          g = context.createGain();  
           g.gain.setValueAtTime(1, ctx.currentTime);
           o.connect(g);
           g.connect(context.destination);
