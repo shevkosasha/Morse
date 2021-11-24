@@ -288,7 +288,10 @@
             }        
             sortable.sort(function(a, b) {
                 return b[1] - a[1];
-            });        
+            });           
+            if (sortable.length >= 10) {
+              sortable = sortable.slice(0,10);
+            }
             var orderedList = {};
             for (var idx in sortable) {
                 orderedList[sortable[idx][0]] = sortable[idx][1];
@@ -339,7 +342,11 @@
           }        
           sortable.sort(function(a, b) {
             return b[1] - a[1];
-          });        
+          });   
+          if (sortable.length >= 10) {
+            sortable = sortable.slice(0,10);
+          }
+          
           var orderedList = {};
           for (var idx in sortable) {
               orderedList[sortable[idx][0]] = sortable[idx][1];
